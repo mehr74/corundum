@@ -3,11 +3,9 @@
 Generates an AXI Stream switch wrapper with the specified number of ports
 """
 
-from __future__ import print_function
-
 import argparse
-import math
 from jinja2 import Template
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.strip())
@@ -23,6 +21,7 @@ def main():
         print(ex)
         exit(1)
 
+
 def generate(ports=4, name=None, output=None):
     if type(ports) is int:
         m = n = ports
@@ -37,18 +36,14 @@ def generate(ports=4, name=None, output=None):
     if output is None:
         output = name + ".v"
 
-    print("Opening file '{0}'...".format(output))
-
-    output_file = open(output, 'w')
-
     print("Generating {0}x{1} port AXI stream switch wrapper {2}...".format(m, n, name))
 
-    cm = int(math.ceil(math.log(m, 2)))
-    cn = int(math.ceil(math.log(n, 2)))
+    cm = (m-1).bit_length()
+    cn = (n-1).bit_length()
 
     t = Template(u"""/*
 
-Copyright (c) 2018 Alex Forencich
+Copyright (c) 2018-2021 Alex Forencich
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -91,7 +86,7 @@ module {{name}} #
     parameter ID_WIDTH = 8,
     // tdest signal width
     // must be wide enough to uniquely address outputs
-    parameter DEST_WIDTH = {{cm}},
+    parameter DEST_WIDTH = {{cn}},
     // Propagate tuser signal
     parameter USER_ENABLE = 1,
     // tuser signal width
@@ -112,10 +107,10 @@ module {{name}} #
     // Output interface register type
     // 0 to bypass, 1 for simple buffer, 2 for skid buffer
     parameter M_REG_TYPE = 2,
-    // arbitration type: "PRIORITY" or "ROUND_ROBIN"
-    parameter ARB_TYPE = "ROUND_ROBIN",
-    // LSB priority: "LOW", "HIGH"
-    parameter LSB_PRIORITY = "HIGH"
+    // select round robin arbitration
+    parameter ARB_TYPE_ROUND_ROBIN = 1,
+    // LSB priority selection
+    parameter ARB_LSB_HIGH_PRIORITY = 1
 )
 (
     input  wire                  clk,
@@ -150,11 +145,11 @@ module {{name}} #
 );
 
 // parameter sizing helpers
-function [31:0] w_32(input [31:0] val);
-    w_32 = val;
+function [DEST_WIDTH-1:0] w_dw(input [DEST_WIDTH-1:0] val);
+    w_dw = val;
 endfunction
 
-function [S_COUNT-1:0] w_s(input [S_COUNT-1:0] val);
+function [{{m-1}}:0] w_s(input [{{m-1}}:0] val);
     w_s = val;
 endfunction
 
@@ -169,13 +164,13 @@ axis_switch #(
     .DEST_WIDTH(DEST_WIDTH),
     .USER_ENABLE(USER_ENABLE),
     .USER_WIDTH(USER_WIDTH),
-    .M_BASE({ {% for p in range(n-1,-1,-1) %}w_32(M{{'%02d'%p}}_BASE){% if not loop.last %}, {% endif %}{% endfor %} }),
-    .M_TOP({ {% for p in range(n-1,-1,-1) %}w_32(M{{'%02d'%p}}_TOP){% if not loop.last %}, {% endif %}{% endfor %} }),
+    .M_BASE({ {% for p in range(n-1,-1,-1) %}w_dw(M{{'%02d'%p}}_BASE){% if not loop.last %}, {% endif %}{% endfor %} }),
+    .M_TOP({ {% for p in range(n-1,-1,-1) %}w_dw(M{{'%02d'%p}}_TOP){% if not loop.last %}, {% endif %}{% endfor %} }),
     .M_CONNECT({ {% for p in range(n-1,-1,-1) %}w_s(M{{'%02d'%p}}_CONNECT){% if not loop.last %}, {% endif %}{% endfor %} }),
     .S_REG_TYPE(S_REG_TYPE),
     .M_REG_TYPE(M_REG_TYPE),
-    .ARB_TYPE(ARB_TYPE),
-    .LSB_PRIORITY(LSB_PRIORITY)
+    .ARB_TYPE_ROUND_ROBIN(ARB_TYPE_ROUND_ROBIN),
+    .ARB_LSB_HIGH_PRIORITY(ARB_LSB_HIGH_PRIORITY)
 )
 axis_switch_inst (
     .clk(clk),
@@ -204,16 +199,20 @@ endmodule
 
 """)
 
-    output_file.write(t.render(
-        m=m,
-        n=n,
-        cm=cm,
-        cn=cn,
-        name=name
-    ))
+    print(f"Writing file '{output}'...")
+
+    with open(output, 'w') as f:
+        f.write(t.render(
+            m=m,
+            n=n,
+            cm=cm,
+            cn=cn,
+            name=name
+        ))
+        f.flush()
 
     print("Done")
 
+
 if __name__ == "__main__":
     main()
-

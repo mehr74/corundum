@@ -3,11 +3,9 @@
 Generates an AXI Stream arbitrated mux wrapper with the specified number of ports
 """
 
-from __future__ import print_function
-
 import argparse
-import math
 from jinja2 import Template
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.strip())
@@ -23,6 +21,7 @@ def main():
         print(ex)
         exit(1)
 
+
 def generate(ports=4, name=None, output=None):
     n = ports
 
@@ -32,17 +31,13 @@ def generate(ports=4, name=None, output=None):
     if output is None:
         output = name + ".v"
 
-    print("Opening file '{0}'...".format(output))
-
-    output_file = open(output, 'w')
-
     print("Generating {0} port AXI stream arbitrated mux wrapper {1}...".format(n, name))
 
-    cn = int(math.ceil(math.log(n, 2)))
+    cn = (n-1).bit_length()
 
     t = Template(u"""/*
 
-Copyright (c) 2018 Alex Forencich
+Copyright (c) 2018-2021 Alex Forencich
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -91,10 +86,10 @@ module {{name}} #
     parameter USER_ENABLE = 1,
     // tuser signal width
     parameter USER_WIDTH = 1,
-    // arbitration type: "PRIORITY" or "ROUND_ROBIN"
-    parameter ARB_TYPE = "PRIORITY",
-    // LSB priority: "LOW", "HIGH"
-    parameter LSB_PRIORITY = "HIGH"
+    // select round robin arbitration
+    parameter ARB_TYPE_ROUND_ROBIN = 0,
+    // LSB priority selection
+    parameter ARB_LSB_HIGH_PRIORITY = 1
 )
 (
     input  wire                  clk,
@@ -137,8 +132,8 @@ axis_arb_mux #(
     .DEST_WIDTH(DEST_WIDTH),
     .USER_ENABLE(USER_ENABLE),
     .USER_WIDTH(USER_WIDTH),
-    .ARB_TYPE(ARB_TYPE),
-    .LSB_PRIORITY(LSB_PRIORITY)
+    .ARB_TYPE_ROUND_ROBIN(ARB_TYPE_ROUND_ROBIN),
+    .ARB_LSB_HIGH_PRIORITY(ARB_LSB_HIGH_PRIORITY)
 )
 axis_arb_mux_inst (
     .clk(clk),
@@ -167,14 +162,18 @@ endmodule
 
 """)
 
-    output_file.write(t.render(
-        n=n,
-        cn=cn,
-        name=name
-    ))
+    print(f"Writing file '{output}'...")
+
+    with open(output, 'w') as f:
+        f.write(t.render(
+            n=n,
+            cn=cn,
+            name=name
+        ))
+        f.flush()
 
     print("Done")
 
+
 if __name__ == "__main__":
     main()
-
