@@ -26,6 +26,7 @@ SYN_FILES += rtl/common/tx_checksum.v
 SYN_FILES += rtl/common/rx_hash.v
 SYN_FILES += rtl/common/rx_checksum.v
 SYN_FILES += rtl/common/cmac_pad.v
+SYN_FILES += rtl/common/kugelblitz_offload.v
 SYN_FILES += lib/eth/rtl/ptp_clock.v
 SYN_FILES += lib/eth/rtl/ptp_clock_cdc.v
 SYN_FILES += lib/eth/rtl/ptp_ts_extract.v
