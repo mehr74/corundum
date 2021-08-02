@@ -15,14 +15,17 @@ module kugelblitz_offload #
     parameter USER_WIDTH = 1
 )
     (
-        input  wire                   qsfp0_tx_clk,
-        input  wire                   qsfp0_tx_rst,
-
+        input wire                    qsfp0_tx_clk,
+        input wire                    qsfp0_tx_rst,
+        input wire                    qsfp0_rx_clk,
+        input wire                    qsfp0_rx_rst,
         input wire                    qsfp1_tx_clk,
         input wire                    qsfp1_tx_rst,
+        input wire                    qsfp1_rx_clk,
+        input wire                    qsfp1_rx_rst,
 
         /*
-         * AXI input qsfp0 tx
+         * AXI input qsfp0
          */
         input  wire [DATA_WIDTH-1:0]  qsfp0_tx_s_axis_tdata,
         input  wire [KEEP_WIDTH-1:0]  qsfp0_tx_s_axis_tkeep,
@@ -31,8 +34,14 @@ module kugelblitz_offload #
         input  wire                   qsfp0_tx_s_axis_tlast,
         input  wire [USER_WIDTH-1:0]  qsfp0_tx_s_axis_tuser,
 
+        output wire [DATA_WIDTH-1:0]  qsfp0_rx_m_axis_tdata,
+        output wire [KEEP_WIDTH-1:0]  qsfp0_rx_m_axis_tkeep,
+        output wire                   qsfp0_rx_m_axis_tvalid,
+        output wire                   qsfp0_rx_m_axis_tlast,
+        output wire [USER_WIDTH-1:0]  qsfp0_rx_m_axis_tuser,
+
         /*
-         * AXI output qsfp0 tx
+         * AXI output qsfp0
          */
         output wire [DATA_WIDTH-1:0]  qsfp0_tx_m_axis_tdata,
         output wire [KEEP_WIDTH-1:0]  qsfp0_tx_m_axis_tkeep,
@@ -41,8 +50,14 @@ module kugelblitz_offload #
         output wire                   qsfp0_tx_m_axis_tlast,
         output wire [USER_WIDTH-1:0]  qsfp0_tx_m_axis_tuser,
 
+        input  wire [DATA_WIDTH-1:0]  qsfp0_rx_s_axis_tdata,
+        input  wire [KEEP_WIDTH-1:0]  qsfp0_rx_s_axis_tkeep,
+        input  wire                   qsfp0_rx_s_axis_tvalid,
+        input  wire                   qsfp0_rx_s_axis_tlast,
+        input  wire [USER_WIDTH-1:0]  qsfp0_rx_s_axis_tuser,
+
         /*
-         * AXI input qsfp1 tx
+         * AXI input qsfp1
          */
         input  wire [DATA_WIDTH-1:0]  qsfp1_tx_s_axis_tdata,
         input  wire [KEEP_WIDTH-1:0]  qsfp1_tx_s_axis_tkeep,
@@ -51,8 +66,14 @@ module kugelblitz_offload #
         input  wire                   qsfp1_tx_s_axis_tlast,
         input  wire [USER_WIDTH-1:0]  qsfp1_tx_s_axis_tuser,
 
+        output wire [DATA_WIDTH-1:0]  qsfp1_rx_m_axis_tdata,
+        output wire [KEEP_WIDTH-1:0]  qsfp1_rx_m_axis_tkeep,
+        output wire                   qsfp1_rx_m_axis_tvalid,
+        output wire                   qsfp1_rx_m_axis_tlast,
+        output wire [USER_WIDTH-1:0]  qsfp1_rx_m_axis_tuser,
+
         /*
-         * AXI output qsfp1 tx
+         * AXI output qsfp1
          */
         output wire [DATA_WIDTH-1:0]  qsfp1_tx_m_axis_tdata,
         output wire [KEEP_WIDTH-1:0]  qsfp1_tx_m_axis_tkeep,
@@ -60,6 +81,12 @@ module kugelblitz_offload #
         input  wire                   qsfp1_tx_m_axis_tready,
         output wire                   qsfp1_tx_m_axis_tlast,
         output wire [USER_WIDTH-1:0]  qsfp1_tx_m_axis_tuser,
+
+        input  wire [DATA_WIDTH-1:0]  qsfp1_rx_s_axis_tdata,
+        input  wire [KEEP_WIDTH-1:0]  qsfp1_rx_s_axis_tkeep,
+        input  wire                   qsfp1_rx_s_axis_tvalid,
+        input  wire                   qsfp1_rx_s_axis_tlast,
+        input  wire [USER_WIDTH-1:0]  qsfp1_rx_s_axis_tuser
     );
 
 // check configuration
@@ -80,7 +107,9 @@ module kugelblitz_offload #
 
         for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
             assign qsfp0_tx_m_axis_tdata[k*8 +: 8] = qsfp0_tx_s_axis_tkeep[k] ? qsfp0_tx_s_axis_tdata[k*8 +: 8] : 8'd0;
+            assign qsfp0_rx_m_axis_tdata[k*8 +: 8] = qsfp0_rx_s_axis_tkeep[k] ? qsfp0_rx_s_axis_tdata[k*8 +: 8] : 8'd0;
             assign qsfp1_tx_m_axis_tdata[k*8 +: 8] = qsfp1_tx_s_axis_tkeep[k] ? qsfp1_tx_s_axis_tdata[k*8 +: 8] : 8'd0;
+            assign qsfp1_rx_m_axis_tdata[k*8 +: 8] = qsfp1_rx_s_axis_tkeep[k] ? qsfp1_rx_s_axis_tdata[k*8 +: 8] : 8'd0;
         end
     endgenerate
 
@@ -90,10 +119,19 @@ module kugelblitz_offload #
     assign qsfp0_tx_m_axis_tlast = qsfp0_tx_s_axis_tlast;
     assign qsfp0_tx_m_axis_tuser = qsfp0_tx_s_axis_tuser;
 
+    assign qsfp0_rx_m_axis_tkeep = qsfp0_rx_s_axis_tkeep;
+    assign qsfp0_rx_m_axis_tvalid = qsfp0_rx_s_axis_tvalid;
+    assign qsfp0_rx_m_axis_tlast = qsfp0_rx_s_axis_tlast;
+    assign qsfp0_rx_m_axis_tuser = qsfp0_rx_s_axis_tuser;
+
     assign qsfp1_tx_m_axis_tkeep = qsfp1_tx_s_axis_tkeep;
     assign qsfp1_tx_m_axis_tvalid = qsfp1_tx_s_axis_tvalid;
     assign qsfp1_tx_s_axis_tready = qsfp1_tx_m_axis_tready;
     assign qsfp1_tx_m_axis_tlast = qsfp1_tx_s_axis_tlast;
     assign qsfp1_tx_m_axis_tuser = qsfp1_tx_s_axis_tuser;
 
+    assign qsfp1_rx_m_axis_tkeep = qsfp1_rx_s_axis_tkeep;
+    assign qsfp1_rx_m_axis_tvalid = qsfp1_rx_s_axis_tvalid;
+    assign qsfp1_rx_m_axis_tlast = qsfp1_rx_s_axis_tlast;
+    assign qsfp1_rx_m_axis_tuser = qsfp1_rx_s_axis_tuser;
 endmodule
