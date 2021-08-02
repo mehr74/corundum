@@ -59,7 +59,7 @@ module kugelblitz_offload #
         output wire                   qsfp1_tx_m_axis_tvalid,
         input  wire                   qsfp1_tx_m_axis_tready,
         output wire                   qsfp1_tx_m_axis_tlast,
-        output wire [USER_WIDTH-1:0]  qsfp1_tx_m_axis_tuser,
+        output wire [USER_WIDTH-1:0]  qsfp1_tx_m_axis_tuser
     );
 
 // check configuration
