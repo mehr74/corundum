@@ -117,11 +117,13 @@ struct mqnic_i2c_bus *mqnic_i2c_bus_create(struct mqnic_dev *mqnic, u8 __iomem *
     adapter->dev.parent = mqnic->dev;
     snprintf(adapter->name, sizeof(adapter->name), "%s I2C%d", mqnic->name, mqnic->i2c_adapter_count);
 
+    /* swsnetlab02 kernel does not have i2c_bit_add_bus symbol
     if (i2c_bit_add_bus(adapter))
     {
         dev_err(mqnic->dev, "Failed to register I2C adapter");
         goto err_free_bus;
     }
+    */
 
     list_add_tail(&bus->head, &mqnic->i2c_bus);
 
