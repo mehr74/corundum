@@ -1600,13 +1600,6 @@ kugelblitz_offload_inst (
     .qsfp1_tx_clk(qsfp1_tx_clk_int),
     .qsfp1_tx_rst(qsfp1_tx_rst_int),
 
-    .qsfp0_tx_m_axis_tdata(qsfp0_mac_tx_axis_tdata),
-    .qsfp0_tx_m_axis_tkeep(qsfp0_mac_tx_axis_tkeep),
-    .qsfp0_tx_m_axis_tvalid(qsfp0_mac_tx_axis_tvalid),
-    .qsfp0_tx_m_axis_tready(qsfp0_mac_tx_axis_tready),
-    .qsfp0_tx_m_axis_tlast(qsfp0_mac_tx_axis_tlast),
-    .qsfp0_tx_m_axis_tuser(qsfp0_mac_tx_axis_tuser),
-
     .qsfp0_tx_s_axis_tdata(qsfp0_kg_tx_axis_tdata),
     .qsfp0_tx_s_axis_tkeep(qsfp0_kg_tx_axis_tkeep),
     .qsfp0_tx_s_axis_tvalid(qsfp0_kg_tx_axis_tvalid),
@@ -1614,12 +1607,12 @@ kugelblitz_offload_inst (
     .qsfp0_tx_s_axis_tlast(qsfp0_kg_tx_axis_tlast),
     .qsfp0_tx_s_axis_tuser(qsfp0_kg_tx_axis_tuser),
 
-    .qsfp1_tx_m_axis_tdata(qsfp1_mac_tx_axis_tdata),
-    .qsfp1_tx_m_axis_tkeep(qsfp1_mac_tx_axis_tkeep),
-    .qsfp1_tx_m_axis_tvalid(qsfp1_mac_tx_axis_tvalid),
-    .qsfp1_tx_m_axis_tready(qsfp1_mac_tx_axis_tready),
-    .qsfp1_tx_m_axis_tlast(qsfp1_mac_tx_axis_tlast),
-    .qsfp1_tx_m_axis_tuser(qsfp1_mac_tx_axis_tuser),
+    .qsfp0_tx_m_axis_tdata(qsfp0_mac_tx_axis_tdata),
+    .qsfp0_tx_m_axis_tkeep(qsfp0_mac_tx_axis_tkeep),
+    .qsfp0_tx_m_axis_tvalid(qsfp0_mac_tx_axis_tvalid),
+    .qsfp0_tx_m_axis_tready(qsfp0_mac_tx_axis_tready),
+    .qsfp0_tx_m_axis_tlast(qsfp0_mac_tx_axis_tlast),
+    .qsfp0_tx_m_axis_tuser(qsfp0_mac_tx_axis_tuser),
 
     .qsfp1_tx_s_axis_tdata(qsfp1_kg_tx_axis_tdata),
     .qsfp1_tx_s_axis_tkeep(qsfp1_kg_tx_axis_tkeep),
@@ -1628,6 +1621,12 @@ kugelblitz_offload_inst (
     .qsfp1_tx_s_axis_tlast(qsfp1_kg_tx_axis_tlast),
     .qsfp1_tx_s_axis_tuser(qsfp1_kg_tx_axis_tuser),
 
+    .qsfp1_tx_m_axis_tdata(qsfp1_mac_tx_axis_tdata),
+    .qsfp1_tx_m_axis_tkeep(qsfp1_mac_tx_axis_tkeep),
+    .qsfp1_tx_m_axis_tvalid(qsfp1_mac_tx_axis_tvalid),
+    .qsfp1_tx_m_axis_tready(qsfp1_mac_tx_axis_tready),
+    .qsfp1_tx_m_axis_tlast(qsfp1_mac_tx_axis_tlast),
+    .qsfp1_tx_m_axis_tuser(qsfp1_mac_tx_axis_tuser)
 );
 
 fpga_core #(
