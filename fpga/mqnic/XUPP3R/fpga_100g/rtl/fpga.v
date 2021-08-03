@@ -1601,6 +1601,29 @@ assign led[0] = led_int[0]; // red
 assign led[1] = qsfp1_rx_status; // yellow
 assign led[2] = qsfp0_rx_status; // green
 
+// AXI lite interface parameters
+parameter AXIL_DATA_WIDTH = 32;
+parameter AXIL_STRB_WIDTH = (AXIL_DATA_WIDTH/8);
+parameter AXIL_ADDR_WIDTH = BAR0_APERTURE;
+wire [AXIL_ADDR_WIDTH-1:0]          axil_kg_awaddr_int;
+wire                                axil_kg_awprot_int;
+wire                                axil_kg_awvalid_int;
+wire                                axil_kg_awready_int;
+wire [AXIL_DATA_WIDTH-1:0]          axil_kg_wdata_int;
+wire [AXIL_STRB_WIDTH-1:0]          axil_kg_wstrb_int;
+wire                                axil_kg_wvalid_int;
+wire                                axil_kg_wready_int;
+wire [1:0]                          axil_kg_bresp_int;
+wire                                axil_kg_bvalid_int;
+wire                                axil_kg_bready_int;
+wire [AXIL_ADDR_WIDTH-1:0]          axil_kg_araddr_int;
+wire [2:0]                          axil_kg_arprot_int;
+wire                                axil_kg_arvalid_int;
+wire                                axil_kg_arready_int;
+wire [AXIL_DATA_WIDTH-1:0]          axil_kg_rdata_int;
+wire [1:0]                          axil_kg_rresp_int;
+wire                                axil_kg_rvalid_int;
+wire                                axil_kg_rready_int;
 kugelblitz_offload #(
     .DATA_WIDTH(AXIS_ETH_DATA_WIDTH),
     .KEEP_WIDTH(AXIS_ETH_KEEP_WIDTH),
@@ -1666,7 +1689,27 @@ kugelblitz_offload_inst (
     .qsfp1_rx_s_axis_tkeep(qsfp1_rx_axis_tkeep_int),
     .qsfp1_rx_s_axis_tvalid(qsfp1_rx_axis_tvalid_int),
     .qsfp1_rx_s_axis_tlast(qsfp1_rx_axis_tlast_int),
-    .qsfp1_rx_s_axis_tuser(qsfp1_rx_axis_tuser_int)
+    .qsfp1_rx_s_axis_tuser(qsfp1_rx_axis_tuser_int),
+
+    .s_axil_awaddr(axil_kg_awaddr_int),
+    .s_axil_awprot(axil_kg_awprot_int),
+    .s_axil_awvalid(axil_kg_awvalid_int),
+    .s_axil_awready(axil_kg_awready_int),
+    .s_axil_wdata(axil_kg_wdata_int),
+    .s_axil_wstrb(axil_kg_wstrb_int),
+    .s_axil_wvalid(axil_kg_wvalid_int),
+    .s_axil_wready(axil_kg_wready_int),
+    .s_axil_bresp(axil_kg_bresp_int),
+    .s_axil_bvalid(axil_kg_bvalid_int),
+    .s_axil_bready(axil_kg_bready_int),
+    .s_axil_araddr(axil_kg_araddr_int),
+    .s_axil_arprot(axil_kg_arprot_int),
+    .s_axil_arvalid(axil_kg_arvalid_int),
+    .s_axil_arready(axil_kg_arready_int),
+    .s_axil_rdata(axil_kg_rdata_int),
+    .s_axil_rresp(axil_kg_rresp_int),
+    .s_axil_rvalid(axil_kg_rvalid_int),
+    .s_axil_rready(axil_kg_rready_int)
 );
 
 fpga_core #(
@@ -1859,7 +1902,27 @@ core_inst (
     .qspi_dq_i(qspi_dq_i_int),
     .qspi_dq_o(qspi_dq_o_int),
     .qspi_dq_oe(qspi_dq_oe_int),
-    .qspi_cs(qspi_cs_int)
+    .qspi_cs(qspi_cs_int),
+
+    .m_axil_kg_awaddr(axil_kg_awaddr_int),
+    .m_axil_kg_awprot(axil_kg_awprot_int),
+    .m_axil_kg_awvalid(axil_kg_awvalid_int),
+    .m_axil_kg_awready(axil_kg_awready_int),
+    .m_axil_kg_wdata(axil_kg_wdata_int),
+    .m_axil_kg_wstrb(axil_kg_wstrb_int),
+    .m_axil_kg_wvalid(axil_kg_wvalid_int),
+    .m_axil_kg_wready(axil_kg_wready_int),
+    .m_axil_kg_bresp(axil_kg_bresp_int),
+    .m_axil_kg_bvalid(axil_kg_bvalid_int),
+    .m_axil_kg_bready(axil_kg_bready_int),
+    .m_axil_kg_araddr(axil_kg_araddr_int),
+    .m_axil_kg_arprot(axil_kg_arprot_int),
+    .m_axil_kg_arvalid(axil_kg_arvalid_int),
+    .m_axil_kg_arready(axil_kg_arready_int),
+    .m_axil_kg_rdata(axil_kg_rdata_int),
+    .m_axil_kg_rresp(axil_kg_rresp_int),
+    .m_axil_kg_rvalid(axil_kg_rvalid_int),
+    .m_axil_kg_rread(axil_kg_rready_int)
 );
 
 endmodule
