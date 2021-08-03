@@ -12,7 +12,13 @@ module kugelblitz_offload #
     // tkeep signal width (words per cycle)
     parameter KEEP_WIDTH = (DATA_WIDTH/8),
     // tuser signal width
-    parameter USER_WIDTH = 1
+    parameter USER_WIDTH = 1,
+    
+    parameter AXIL_DATA_WIDTH = 32,
+    
+    parameter AXIL_STRB_WIDTH = (AXIL_DATA_WIDTH/8),
+    
+    parameter AXIL_ADDR_WIDTH = 32
 )
     (
         input wire                    qsfp0_tx_clk,
@@ -88,22 +94,22 @@ module kugelblitz_offload #
         input  wire                   qsfp1_rx_s_axis_tlast,
         input  wire [USER_WIDTH-1:0]  qsfp1_rx_s_axis_tuser,
 
-        input  wire [ADDR_WIDTH-1:0]  s_axil_awaddr,
+        input  wire [AXIL_ADDR_WIDTH-1:0]  s_axil_awaddr,
         input  wire [2:0]             s_axil_awprot,
         input  wire                   s_axil_awvalid,
         output wire                   s_axil_awready,
-        input  wire [DATA_WIDTH-1:0]  s_axil_wdata,
-        input  wire [STRB_WIDTH-1:0]  s_axil_wstrb,
+        input  wire [AXIL_DATA_WIDTH-1:0]  s_axil_wdata,
+        input  wire [AXIL_STRB_WIDTH-1:0]  s_axil_wstrb,
         input  wire                   s_axil_wvalid,
         output wire                   s_axil_wready,
         output wire [1:0]             s_axil_bresp,
         output wire                   s_axil_bvalid,
         input  wire                   s_axil_bready,
-        input  wire [ADDR_WIDTH-1:0]  s_axil_araddr,
+        input  wire [AXIL_ADDR_WIDTH-1:0]  s_axil_araddr,
         input  wire [2:0]             s_axil_arprot,
         input  wire                   s_axil_arvalid,
         output wire                   s_axil_arready,
-        output wire [DATA_WIDTH-1:0]  s_axil_rdata,
+        output wire [AXIL_DATA_WIDTH-1:0]  s_axil_rdata,
         output wire [1:0]             s_axil_rresp,
         output wire                   s_axil_rvalid,
         input  wire                   s_axil_rready

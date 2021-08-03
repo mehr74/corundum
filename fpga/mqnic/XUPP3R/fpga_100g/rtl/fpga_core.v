@@ -284,6 +284,7 @@ parameter FPGA_ID = 32'h4B31093;
 // Structural parameters
 parameter IF_COUNT = 2;
 parameter PORTS_PER_IF = 1;
+parameter AXIL_IF_COUNT = 4;
 
 parameter PORT_COUNT = IF_COUNT*PORTS_PER_IF;
 
@@ -1288,15 +1289,16 @@ wire [IF_COUNT*2-1:0]                   axil_if_csr_rresp;
 wire [IF_COUNT-1:0]                     axil_if_csr_rvalid;
 wire [IF_COUNT-1:0]                     axil_if_csr_rready;
 
+
 axil_interconnect #(
     .DATA_WIDTH(AXIL_DATA_WIDTH),
     .ADDR_WIDTH(AXIL_ADDR_WIDTH),
     .S_COUNT(1),
-    .M_COUNT(IF_COUNT + 1),
+    .M_COUNT(AXIL_IF_COUNT),
     .M_BASE_ADDR(0),
     .M_ADDR_WIDTH({IF_COUNT{w_32(IF_AXIL_ADDR_WIDTH)}}),
-    .M_CONNECT_READ({IF_COUNT{1'b1}}),
-    .M_CONNECT_WRITE({IF_COUNT{1'b1}})
+    .M_CONNECT_READ({AXIL_IF_COUNT{1'b1}}),
+    .M_CONNECT_WRITE({AXIL_IF_COUNT{1'b1}})
 )
 axil_interconnect_inst (
     .clk(clk_250mhz),

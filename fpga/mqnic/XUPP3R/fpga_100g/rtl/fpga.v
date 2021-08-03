@@ -1627,7 +1627,10 @@ wire                                axil_kg_rready_int;
 kugelblitz_offload #(
     .DATA_WIDTH(AXIS_ETH_DATA_WIDTH),
     .KEEP_WIDTH(AXIS_ETH_KEEP_WIDTH),
-    .USER_WIDTH(1)
+    .USER_WIDTH(1),
+    .AXIL_DATA_WIDTH(AXIL_DATA_WIDTH),
+    .AXIL_STRB_WIDTH(AXIL_STRB_WIDTH),
+    .AXIL_ADDR_WIDTH(AXIL_ADDR_WIDTH)
 )
 kugelblitz_offload_inst (
     .qsfp0_tx_clk(qsfp0_tx_clk_int),
