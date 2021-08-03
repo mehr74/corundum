@@ -21,6 +21,12 @@ set_property -dict [list \
     CONFIG.pf0_bar0_prefetchable {true} \
     CONFIG.pf0_bar0_scale {Megabytes} \
     CONFIG.pf0_bar0_size {16} \
+    CONFIG.pf0_bar2_enabled {true} \
+    CONFIG.pf0_bar2_type {Memory} \
+    CONFIG.pf0_bar2_64bit {true} \
+    CONFIG.pf0_bar2_prefetchable {true} \
+    CONFIG.pf0_bar2_scale {Kilobytes} \
+    CONFIG.pf0_bar2_size {128} \
     CONFIG.vendor_id {1234} \
     CONFIG.en_msi_per_vec_masking {true} \
 ] [get_ips pcie4_uscale_plus_0]
