@@ -96,60 +96,26 @@ module kugelblitz_offload #
         input  wire                   qsfp1_rx_s_axis_tlast,
         input  wire [USER_WIDTH-1:0]  qsfp1_rx_s_axis_tuser,
 
-        input  wire [S_COUNT*AXIL_ADDR_WIDTH-1:0]  s_axil_awaddr,
-        input  wire [S_COUNT*3-1:0]           s_axil_awprot,
-        input  wire [S_COUNT-1:0]             s_axil_awvalid,
-        output wire [S_COUNT-1:0]             s_axil_awready,
-        input  wire [S_COUNT*AXIL_DATA_WIDTH-1:0]  s_axil_wdata,
-        input  wire [S_COUNT*AXIL_STRB_WIDTH-1:0]  s_axil_wstrb,
-        input  wire [S_COUNT-1:0]             s_axil_wvalid,
-        output wire [S_COUNT-1:0]             s_axil_wready,
-        output wire [S_COUNT*2-1:0]           s_axil_bresp,
-        output wire [S_COUNT-1:0]             s_axil_bvalid,
-        input  wire [S_COUNT-1:0]             s_axil_bready,
-        input  wire [S_COUNT*AXIL_ADDR_WIDTH-1:0]  s_axil_araddr,
-        input  wire [S_COUNT*3-1:0]           s_axil_arprot,
-        input  wire [S_COUNT-1:0]             s_axil_arvalid,
-        output wire [S_COUNT-1:0]             s_axil_arready,
-        output wire [S_COUNT*AXIL_DATA_WIDTH-1:0]  s_axil_rdata,
-        output wire [S_COUNT*2-1:0]           s_axil_rresp,
-        output wire [S_COUNT-1:0]             s_axil_rvalid,
-        input  wire [S_COUNT-1:0]             s_axil_rready
+        input  wire [S_COUNT*AXIL_ADDR_WIDTH-1:0]   s_axil_awaddr,
+        input  wire [S_COUNT*3-1:0]                 s_axil_awprot,
+        input  wire [S_COUNT-1:0]                   s_axil_awvalid,
+        output wire [S_COUNT-1:0]                   s_axil_awready,
+        input  wire [S_COUNT*AXIL_DATA_WIDTH-1:0]   s_axil_wdata,
+        input  wire [S_COUNT*AXIL_STRB_WIDTH-1:0]   s_axil_wstrb,
+        input  wire [S_COUNT-1:0]                   s_axil_wvalid,
+        output wire [S_COUNT-1:0]                   s_axil_wready,
+        output wire [S_COUNT*2-1:0]                 s_axil_bresp,
+        output wire [S_COUNT-1:0]                   s_axil_bvalid,
+        input  wire [S_COUNT-1:0]                   s_axil_bready,
+        input  wire [S_COUNT*AXIL_ADDR_WIDTH-1:0]   s_axil_araddr,
+        input  wire [S_COUNT*3-1:0]                 s_axil_arprot,
+        input  wire [S_COUNT-1:0]                   s_axil_arvalid,
+        output wire [S_COUNT-1:0]                   s_axil_arready,
+        output wire [S_COUNT*AXIL_DATA_WIDTH-1:0]   s_axil_rdata,
+        output wire [S_COUNT*2-1:0]                 s_axil_rresp,
+        output wire [S_COUNT-1:0]                   s_axil_rvalid,
+        input  wire [S_COUNT-1:0]                   s_axil_rready
     );
-
-    generate
-        genvar k;
-        for (k = 0; k < S_COUNT; k = k + 1) begin : iaxil
-            kugelblitz_axil_regfile #(
-                .DATA_WIDTH(DATA_WIDTH),
-                .ADDR_WIDTH(ADDR_WIDTH),
-                .STRB_WIDTH(STRB_WIDTH)
-            )
-            kg_axil_regfile_inst (
-                .clk(clk),
-                .rst(rst),
-                .s_axil_awaddr(s_axil_awaddr[n*AXIL_ADDR_WIDTH +: AXIL_ADDR_WIDTH]),
-                .s_axil_awprot(s_axil_awprot[n*3 +: 3]),
-                .s_axil_awvalid(s_axil_awvalid[n]),
-                .s_axil_awready(s_axil_awready[n]),
-                .s_axil_wdata(s_axil_wdata[n*AXIL_DATA_WIDTH +: AXIL_DATA_WIDTH]),
-                .s_axil_wstrb(s_axil_wstrb[n*AXIL_STRB_WIDTH +: AXIL_STRB_WIDTH]),
-                .s_axil_wvalid(s_axil_wvalid[n]),
-                .s_axil_wready(s_axil_wready[n]),
-                .s_axil_bresp(s_axil_bresp[n*2 +: 2]),
-                .s_axil_bvalid(s_axil_bvalid[n]),
-                .s_axil_bready(s_axil_bready[n]),
-                .s_axil_araddr(s_axil_araddr[n*AXIL_ADDR_WIDTH +: AXIL_ADDR_WIDTH]),
-                .s_axil_arprot(s_axil_arprot[n*3 +: 3]),
-                .s_axil_arvalid(s_axil_arvalid[n]),
-                .s_axil_arready(s_axil_arready[n]),
-                .s_axil_rdata(s_axil_rdata[n*AXIL_DATA_WIDTH +: AXIL_DATA_WIDTH]),
-                .s_axil_rresp(s_axil_rresp[n*2 +: 2]),
-                .s_axil_rvalid(s_axil_rvalid[n]),
-                .s_axil_rready(s_axil_rread[n])
-            );
-        end
-    endgenerate
 
 // check configuration
     initial begin
@@ -164,36 +130,89 @@ module kugelblitz_offload #
         end
     end
 
+    wire [S_COUNT-1:0] kg_address_valid_int;
+    wire [S_COUNT-1:0] kg_address_int;
+    wire [S_COUNT-1:0] kg_data_valid_int;
+    wire [S_COUNT-1:0] kg_data_int;
+
     generate
         genvar k;
-
-        for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
-            assign qsfp0_tx_m_axis_tdata[k*8 +: 8] = qsfp0_tx_s_axis_tkeep[k] ? qsfp0_tx_s_axis_tdata[k*8 +: 8] : 8'd0;
-            assign qsfp0_rx_m_axis_tdata[k*8 +: 8] = qsfp0_rx_s_axis_tkeep[k] ? qsfp0_rx_s_axis_tdata[k*8 +: 8] : 8'd0;
-            assign qsfp1_tx_m_axis_tdata[k*8 +: 8] = qsfp1_tx_s_axis_tkeep[k] ? qsfp1_tx_s_axis_tdata[k*8 +: 8] : 8'd0;
-            assign qsfp1_rx_m_axis_tdata[k*8 +: 8] = qsfp1_rx_s_axis_tkeep[k] ? qsfp1_rx_s_axis_tdata[k*8 +: 8] : 8'd0;
+        for (k = 0; k < S_COUNT; k = k + 1) begin : iaxil
+            kugelblitz_axil_regfile #(
+                .DATA_WIDTH(DATA_WIDTH),
+                .ADDR_WIDTH(ADDR_WIDTH),
+                .STRB_WIDTH(STRB_WIDTH)
+            )
+                kg_axil_regfile_inst (
+                    .clk(clk),
+                    .rst(rst),
+                    .s_axil_awaddr(s_axil_awaddr[n*AXIL_ADDR_WIDTH +: AXIL_ADDR_WIDTH]),
+                    .s_axil_awprot(s_axil_awprot[n*3 +: 3]),
+                    .s_axil_awvalid(s_axil_awvalid[n]),
+                    .s_axil_awready(s_axil_awready[n]),
+                    .s_axil_wdata(s_axil_wdata[n*AXIL_DATA_WIDTH +: AXIL_DATA_WIDTH]),
+                    .s_axil_wstrb(s_axil_wstrb[n*AXIL_STRB_WIDTH +: AXIL_STRB_WIDTH]),
+                    .s_axil_wvalid(s_axil_wvalid[n]),
+                    .s_axil_wready(s_axil_wready[n]),
+                    .s_axil_bresp(s_axil_bresp[n*2 +: 2]),
+                    .s_axil_bvalid(s_axil_bvalid[n]),
+                    .s_axil_bready(s_axil_bready[n]),
+                    .s_axil_araddr(s_axil_araddr[n*AXIL_ADDR_WIDTH +: AXIL_ADDR_WIDTH]),
+                    .s_axil_arprot(s_axil_arprot[n*3 +: 3]),
+                    .s_axil_arvalid(s_axil_arvalid[n]),
+                    .s_axil_arready(s_axil_arready[n]),
+                    .s_axil_rdata(s_axil_rdata[n*AXIL_DATA_WIDTH +: AXIL_DATA_WIDTH]),
+                    .s_axil_rresp(s_axil_rresp[n*2 +: 2]),
+                    .s_axil_rvalid(s_axil_rvalid[n]),
+                    .s_axil_rready(s_axil_rread[n]),
+                    .kg_address(kg_address_int[n]),
+                    .kg_address_valid(kg_address_valid_int[n]),
+                    .kg_data(kg_data_int[n]),
+                    .kg_data_valid(kg_data_valid_int[n])
+                );
         end
     endgenerate
 
-    assign qsfp0_tx_m_axis_tkeep = qsfp0_tx_s_axis_tkeep;
-    assign qsfp0_tx_m_axis_tvalid = qsfp0_tx_s_axis_tvalid;
-    assign qsfp0_tx_s_axis_tready = qsfp0_tx_m_axis_tready;
-    assign qsfp0_tx_m_axis_tlast = qsfp0_tx_s_axis_tlast;
-    assign qsfp0_tx_m_axis_tuser = qsfp0_tx_s_axis_tuser;
+    always@(posedge clk) begin
 
-    assign qsfp0_rx_m_axis_tkeep = qsfp0_rx_s_axis_tkeep;
-    assign qsfp0_rx_m_axis_tvalid = qsfp0_rx_s_axis_tvalid;
-    assign qsfp0_rx_m_axis_tlast = qsfp0_rx_s_axis_tlast;
-    assign qsfp0_rx_m_axis_tuser = qsfp0_rx_s_axis_tuser;
+        for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
+            qsfp0_tx_m_axis_tdata[k*8 +: 8] <= !qsfp0_tx_s_axis_tkeep[k] ? 8'd0 :
+                (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0] :
+                qsfp0_tx_s_axis_tdata[k*8 +: 8];
 
-    assign qsfp1_tx_m_axis_tkeep = qsfp1_tx_s_axis_tkeep;
-    assign qsfp1_tx_m_axis_tvalid = qsfp1_tx_s_axis_tvalid;
-    assign qsfp1_tx_s_axis_tready = qsfp1_tx_m_axis_tready;
-    assign qsfp1_tx_m_axis_tlast = qsfp1_tx_s_axis_tlast;
-    assign qsfp1_tx_m_axis_tuser = qsfp1_tx_s_axis_tuser;
+            qsfp0_rx_m_axis_tdata[k*8 +: 8] <= !qsfp0_rx_s_axis_tkeep[k] ? 8'd0 :
+                (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0] :
+                qsfp0_rx_s_axis_tdata[k*8 +: 8];
 
-    assign qsfp1_rx_m_axis_tkeep = qsfp1_rx_s_axis_tkeep;
-    assign qsfp1_rx_m_axis_tvalid = qsfp1_rx_s_axis_tvalid;
-    assign qsfp1_rx_m_axis_tlast = qsfp1_rx_s_axis_tlast;
-    assign qsfp1_rx_m_axis_tuser = qsfp1_rx_s_axis_tuser;
+            qsfp1_tx_m_axis_tdata[k*8 +: 8] <= !qsfp1_tx_s_axis_tkeep[k] ? 8'd0 :
+                (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1] :
+                qsfp1_tx_s_axis_tdata[k*8 +: 8];
+
+            qsfp1_rx_m_axis_tdata[k*8 +: 8] <= !qsfp1_rx_s_axis_tkeep[k] ? 8'd0 :
+                (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1] :
+                qsfp1_rx_s_axis_tdata[k*8 +: 8];
+        end
+
+        qsfp0_tx_m_axis_tkeep <= qsfp0_tx_s_axis_tkeep;
+        qsfp0_tx_m_axis_tvalid <= qsfp0_tx_s_axis_tvalid;
+        qsfp0_tx_s_axis_tready <= qsfp0_tx_m_axis_tready;
+        qsfp0_tx_m_axis_tlast <= qsfp0_tx_s_axis_tlast;
+        qsfp0_tx_m_axis_tuser <= qsfp0_tx_s_axis_tuser;
+
+        qsfp0_rx_m_axis_tkeep <= qsfp0_rx_s_axis_tkeep;
+        qsfp0_rx_m_axis_tvalid <= qsfp0_rx_s_axis_tvalid;
+        qsfp0_rx_m_axis_tlast <= qsfp0_rx_s_axis_tlast;
+        qsfp0_rx_m_axis_tuser <= qsfp0_rx_s_axis_tuser;
+
+        qsfp1_tx_m_axis_tkeep <= qsfp1_tx_s_axis_tkeep;
+        qsfp1_tx_m_axis_tvalid <= qsfp1_tx_s_axis_tvalid;
+        qsfp1_tx_s_axis_tready <= qsfp1_tx_m_axis_tready;
+        qsfp1_tx_m_axis_tlast <= qsfp1_tx_s_axis_tlast;
+        qsfp1_tx_m_axis_tuser <= qsfp1_tx_s_axis_tuser;
+
+        qsfp1_rx_m_axis_tkeep <= qsfp1_rx_s_axis_tkeep;
+        qsfp1_rx_m_axis_tvalid <= qsfp1_rx_s_axis_tvalid;
+        qsfp1_rx_m_axis_tlast <= qsfp1_rx_s_axis_tlast;
+        qsfp1_rx_m_axis_tuser <= qsfp1_rx_s_axis_tuser;
+    end
 endmodule
