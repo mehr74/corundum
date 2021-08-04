@@ -164,7 +164,7 @@ module kugelblitz_offload #
                     .s_axil_rdata(s_axil_rdata[n*AXIL_DATA_WIDTH +: AXIL_DATA_WIDTH]),
                     .s_axil_rresp(s_axil_rresp[n*2 +: 2]),
                     .s_axil_rvalid(s_axil_rvalid[n]),
-                    .s_axil_rready(s_axil_rread[n]),
+                    .s_axil_rready(s_axil_rready[n]),
                     .kg_address(kg_address_int[n]),
                     .kg_address_valid(kg_address_valid_int[n]),
                     .kg_data(kg_data_int[n]),
@@ -173,43 +173,50 @@ module kugelblitz_offload #
         end
     endgenerate
 
-    always@(posedge clk) begin
-
+    always@(posedge qsfp0_tx_clk) begin
         for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
             qsfp0_tx_m_axis_tdata[k*8 +: 8] <= !qsfp0_tx_s_axis_tkeep[k] ? 8'd0 :
                 (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0] :
-                qsfp0_tx_s_axis_tdata[k*8 +: 8];
-
-            qsfp0_rx_m_axis_tdata[k*8 +: 8] <= !qsfp0_rx_s_axis_tkeep[k] ? 8'd0 :
-                (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0] :
-                qsfp0_rx_s_axis_tdata[k*8 +: 8];
-
-            qsfp1_tx_m_axis_tdata[k*8 +: 8] <= !qsfp1_tx_s_axis_tkeep[k] ? 8'd0 :
-                (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1] :
-                qsfp1_tx_s_axis_tdata[k*8 +: 8];
-
-            qsfp1_rx_m_axis_tdata[k*8 +: 8] <= !qsfp1_rx_s_axis_tkeep[k] ? 8'd0 :
-                (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1] :
-                qsfp1_rx_s_axis_tdata[k*8 +: 8];
+                    qsfp0_tx_s_axis_tdata[k*8 +: 8];
         end
-
         qsfp0_tx_m_axis_tkeep <= qsfp0_tx_s_axis_tkeep;
         qsfp0_tx_m_axis_tvalid <= qsfp0_tx_s_axis_tvalid;
         qsfp0_tx_s_axis_tready <= qsfp0_tx_m_axis_tready;
         qsfp0_tx_m_axis_tlast <= qsfp0_tx_s_axis_tlast;
         qsfp0_tx_m_axis_tuser <= qsfp0_tx_s_axis_tuser;
+    end
 
+    always@(posedge qsfp0_rx_clk) begin
+        for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
+            qsfp0_rx_m_axis_tdata[k*8 +: 8] <= !qsfp0_rx_s_axis_tkeep[k] ? 8'd0 :
+                (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0] :
+                    qsfp0_rx_s_axis_tdata[k*8 +: 8];
+        end
         qsfp0_rx_m_axis_tkeep <= qsfp0_rx_s_axis_tkeep;
         qsfp0_rx_m_axis_tvalid <= qsfp0_rx_s_axis_tvalid;
         qsfp0_rx_m_axis_tlast <= qsfp0_rx_s_axis_tlast;
         qsfp0_rx_m_axis_tuser <= qsfp0_rx_s_axis_tuser;
+    end
 
+    always@(posedge qsfp1_tx_clk) begin
+        for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
+            qsfp1_tx_m_axis_tdata[k*8 +: 8] <= !qsfp1_tx_s_axis_tkeep[k] ? 8'd0 :
+                (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1] :
+                    qsfp1_tx_s_axis_tdata[k*8 +: 8];
+        end
         qsfp1_tx_m_axis_tkeep <= qsfp1_tx_s_axis_tkeep;
         qsfp1_tx_m_axis_tvalid <= qsfp1_tx_s_axis_tvalid;
         qsfp1_tx_s_axis_tready <= qsfp1_tx_m_axis_tready;
         qsfp1_tx_m_axis_tlast <= qsfp1_tx_s_axis_tlast;
         qsfp1_tx_m_axis_tuser <= qsfp1_tx_s_axis_tuser;
+    end
 
+    always@(posedge qsfp1_rx_clk) begin
+        for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
+            qsfp1_rx_m_axis_tdata[k*8 +: 8] <= !qsfp1_rx_s_axis_tkeep[k] ? 8'd0 :
+                (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1] :
+                    qsfp1_rx_s_axis_tdata[k*8 +: 8];
+        end
         qsfp1_rx_m_axis_tkeep <= qsfp1_rx_s_axis_tkeep;
         qsfp1_rx_m_axis_tvalid <= qsfp1_rx_s_axis_tvalid;
         qsfp1_rx_m_axis_tlast <= qsfp1_rx_s_axis_tlast;
