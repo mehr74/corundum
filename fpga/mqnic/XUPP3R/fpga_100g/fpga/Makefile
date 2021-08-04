@@ -31,6 +31,7 @@ SYN_FILES += lib/eth/rtl/ptp_clock.v
 SYN_FILES += lib/eth/rtl/ptp_clock_cdc.v
 SYN_FILES += lib/eth/rtl/ptp_ts_extract.v
 SYN_FILES += lib/axi/rtl/axil_interconnect.v
+SYN_FILES += lib/axi/rtl/kugelblitz_axil_regfile.v
 SYN_FILES += lib/axi/rtl/arbiter.v
 SYN_FILES += lib/axi/rtl/priority_encoder.v
 SYN_FILES += lib/axis/rtl/axis_adapter.v

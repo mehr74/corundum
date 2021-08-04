@@ -136,12 +136,12 @@ module kugelblitz_offload #
     wire [S_COUNT-1:0] kg_data_int;
 
     generate
-        genvar k;
-        for (k = 0; k < S_COUNT; k = k + 1) begin : iaxil
+        genvar n;
+        for (n = 0; n < S_COUNT; n = n + 1) begin : iaxil
             kugelblitz_axil_regfile #(
-                .DATA_WIDTH(DATA_WIDTH),
-                .ADDR_WIDTH(ADDR_WIDTH),
-                .STRB_WIDTH(STRB_WIDTH)
+                .DATA_WIDTH(AXIL_DATA_WIDTH),
+                .ADDR_WIDTH(AXIL_ADDR_WIDTH),
+                .STRB_WIDTH(AXIL_STRB_WIDTH)
             )
                 kg_axil_regfile_inst (
                     .clk(clk),
@@ -173,53 +173,44 @@ module kugelblitz_offload #
         end
     endgenerate
 
-    always@(posedge qsfp0_tx_clk) begin
+    generate
+        genvar k;
         for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
-            qsfp0_tx_m_axis_tdata[k*8 +: 8] <= !qsfp0_tx_s_axis_tkeep[k] ? 8'd0 :
+            assign qsfp0_tx_m_axis_tdata[k*8 +: 8] = !qsfp0_tx_s_axis_tkeep[k] ? 8'd0 :
                 (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0] :
                     qsfp0_tx_s_axis_tdata[k*8 +: 8];
-        end
-        qsfp0_tx_m_axis_tkeep <= qsfp0_tx_s_axis_tkeep;
-        qsfp0_tx_m_axis_tvalid <= qsfp0_tx_s_axis_tvalid;
-        qsfp0_tx_s_axis_tready <= qsfp0_tx_m_axis_tready;
-        qsfp0_tx_m_axis_tlast <= qsfp0_tx_s_axis_tlast;
-        qsfp0_tx_m_axis_tuser <= qsfp0_tx_s_axis_tuser;
-    end
-
-    always@(posedge qsfp0_rx_clk) begin
-        for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
-            qsfp0_rx_m_axis_tdata[k*8 +: 8] <= !qsfp0_rx_s_axis_tkeep[k] ? 8'd0 :
+       
+            assign qsfp0_rx_m_axis_tdata[k*8 +: 8] = !qsfp0_rx_s_axis_tkeep[k] ? 8'd0 :
                 (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0] :
                     qsfp0_rx_s_axis_tdata[k*8 +: 8];
-        end
-        qsfp0_rx_m_axis_tkeep <= qsfp0_rx_s_axis_tkeep;
-        qsfp0_rx_m_axis_tvalid <= qsfp0_rx_s_axis_tvalid;
-        qsfp0_rx_m_axis_tlast <= qsfp0_rx_s_axis_tlast;
-        qsfp0_rx_m_axis_tuser <= qsfp0_rx_s_axis_tuser;
-    end
-
-    always@(posedge qsfp1_tx_clk) begin
-        for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
-            qsfp1_tx_m_axis_tdata[k*8 +: 8] <= !qsfp1_tx_s_axis_tkeep[k] ? 8'd0 :
+            assign qsfp1_tx_m_axis_tdata[k*8 +: 8] = !qsfp1_tx_s_axis_tkeep[k] ? 8'd0 :
                 (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1] :
                     qsfp1_tx_s_axis_tdata[k*8 +: 8];
-        end
-        qsfp1_tx_m_axis_tkeep <= qsfp1_tx_s_axis_tkeep;
-        qsfp1_tx_m_axis_tvalid <= qsfp1_tx_s_axis_tvalid;
-        qsfp1_tx_s_axis_tready <= qsfp1_tx_m_axis_tready;
-        qsfp1_tx_m_axis_tlast <= qsfp1_tx_s_axis_tlast;
-        qsfp1_tx_m_axis_tuser <= qsfp1_tx_s_axis_tuser;
-    end
-
-    always@(posedge qsfp1_rx_clk) begin
-        for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
-            qsfp1_rx_m_axis_tdata[k*8 +: 8] <= !qsfp1_rx_s_axis_tkeep[k] ? 8'd0 :
+            assign qsfp1_rx_m_axis_tdata[k*8 +: 8] = !qsfp1_rx_s_axis_tkeep[k] ? 8'd0 :
                 (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1] :
                     qsfp1_rx_s_axis_tdata[k*8 +: 8];
         end
-        qsfp1_rx_m_axis_tkeep <= qsfp1_rx_s_axis_tkeep;
-        qsfp1_rx_m_axis_tvalid <= qsfp1_rx_s_axis_tvalid;
-        qsfp1_rx_m_axis_tlast <= qsfp1_rx_s_axis_tlast;
-        qsfp1_rx_m_axis_tuser <= qsfp1_rx_s_axis_tuser;
-    end
+    endgenerate 
+
+    assign qsfp0_tx_m_axis_tkeep = qsfp0_tx_s_axis_tkeep;
+    assign qsfp0_tx_m_axis_tvalid = qsfp0_tx_s_axis_tvalid;
+    assign qsfp0_tx_s_axis_tready = qsfp0_tx_m_axis_tready;
+    assign qsfp0_tx_m_axis_tlast = qsfp0_tx_s_axis_tlast;
+    assign qsfp0_tx_m_axis_tuser = qsfp0_tx_s_axis_tuser;
+
+    assign qsfp0_rx_m_axis_tkeep = qsfp0_rx_s_axis_tkeep;
+    assign qsfp0_rx_m_axis_tvalid = qsfp0_rx_s_axis_tvalid;
+    assign qsfp0_rx_m_axis_tlast = qsfp0_rx_s_axis_tlast;
+    assign qsfp0_rx_m_axis_tuser = qsfp0_rx_s_axis_tuser;
+
+    assign qsfp1_tx_m_axis_tkeep = qsfp1_tx_s_axis_tkeep;
+    assign qsfp1_tx_m_axis_tvalid = qsfp1_tx_s_axis_tvalid;
+    assign qsfp1_tx_s_axis_tready = qsfp1_tx_m_axis_tready;
+    assign qsfp1_tx_m_axis_tlast = qsfp1_tx_s_axis_tlast;
+    assign qsfp1_tx_m_axis_tuser = qsfp1_tx_s_axis_tuser;
+
+    assign qsfp1_rx_m_axis_tkeep = qsfp1_rx_s_axis_tkeep;
+    assign qsfp1_rx_m_axis_tvalid = qsfp1_rx_s_axis_tvalid;
+    assign qsfp1_rx_m_axis_tlast = qsfp1_rx_s_axis_tlast;
+    assign qsfp1_rx_m_axis_tuser = qsfp1_rx_s_axis_tuser;
 endmodule

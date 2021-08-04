@@ -146,7 +146,7 @@ module kugelblitz_axil_regfile #
 
     always @( posedge clk)
         begin
-            if ( S_AXI_ARESETN == 1'b0 )
+            if ( rst )
                 begin
                     axi_awready <= 1'b0;
                     aw_en <= 1'b1;
@@ -180,7 +180,7 @@ module kugelblitz_axil_regfile #
 
     always @( posedge clk)
         begin
-            if ( S_AXI_ARESETN == 1'b0 )
+            if ( rst )
                 begin
                     axi_awaddr <= 0;
                 end
@@ -201,7 +201,7 @@ module kugelblitz_axil_regfile #
 
     always @( posedge clk)
         begin
-            if ( S_AXI_ARESETN == 1'b0 )
+            if ( rst )
                 begin
                     axi_wready <= 1'b0;
                 end
@@ -233,7 +233,7 @@ module kugelblitz_axil_regfile #
 
     always @( posedge clk)
         begin
-            if ( S_AXI_ARESETN == 1'b0 )
+            if ( rst )
                 begin
                     slv_reg0 <= 0;
                     slv_reg1 <= 0;
@@ -543,7 +543,7 @@ module kugelblitz_axil_regfile #
 
     always @( posedge clk)
         begin
-            if ( S_AXI_ARESETN == 1'b0 )
+            if ( rst )
                 begin
                     axi_bvalid  <= 0;
                     axi_bresp   <= 2'b0;
@@ -577,7 +577,7 @@ module kugelblitz_axil_regfile #
 
     always @( posedge clk)
         begin
-            if ( S_AXI_ARESETN == 1'b0 )
+            if ( rst )
                 begin
                     axi_arready <= 1'b0;
                     axi_araddr  <= 32'b0;
@@ -608,7 +608,7 @@ module kugelblitz_axil_regfile #
     // cleared to zero on reset (active low).
     always @( posedge clk)
         begin
-            if ( S_AXI_ARESETN == 1'b0 )
+            if ( rst )
                 begin
                     axi_rvalid <= 0;
                     axi_rresp  <= 0;
@@ -676,7 +676,7 @@ module kugelblitz_axil_regfile #
     // Output register or memory read data
     always @( posedge clk)
         begin
-            if ( S_AXI_ARESETN == 1'b0 )
+            if ( rst )
                 begin
                     axi_rdata  <= 0;
                 end
