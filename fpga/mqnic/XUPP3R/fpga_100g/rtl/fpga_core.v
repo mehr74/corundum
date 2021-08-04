@@ -50,8 +50,12 @@ module fpga_core #
     parameter RQ_SEQ_NUM_WIDTH = 6,
     parameter BAR0_APERTURE = 25,
     parameter AXIS_ETH_DATA_WIDTH = 512,
-    parameter AXIS_ETH_KEEP_WIDTH = AXIS_ETH_DATA_WIDTH/8
-)
+    parameter AXIS_ETH_KEEP_WIDTH = AXIS_ETH_DATA_WIDTH/8,
+    parameter KG_COUNT = 2,
+    parameter AXIL_DATA_WIDTH = 32,
+    parameter AXIL_STRB_WIDTH = (AXIL_DATA_WIDTH/8),
+    parameter AXIL_ADDR_WIDTH = BAR0_APERTURE
+    )
 (
     /*
      * Clock: 250 MHz
@@ -246,25 +250,25 @@ module fpga_core #
     output wire [3:0] 			      qspi_dq_oe,
     output wire 			      qspi_cs,
 
-    output wire [AXIL_ADDR_WIDTH-1:0]          m_axil_kg_awaddr,
-    output wire                                m_axil_kg_awprot,
-    output wire                                m_axil_kg_awvalid,
-    input  wire                                m_axil_kg_awready,
-    output wire [AXIL_DATA_WIDTH-1:0]          m_axil_kg_wdata,
-    output wire [AXIL_STRB_WIDTH-1:0]          m_axil_kg_wstrb,
-    output wire                                m_axil_kg_wvalid,
-    input  wire                                m_axil_kg_wready,
-    input  wire [1:0]                          m_axil_kg_bresp,
-    input  wire                                m_axil_kg_bvalid,
-    output wire                                m_axil_kg_bready,
-    output wire [AXIL_ADDR_WIDTH-1:0]          m_axil_kg_araddr,
-    output wire [2:0]                          m_axil_kg_arprot,
-    output wire                                m_axil_kg_arvalid,
-    input  wire                                m_axil_kg_arready,
-    input  wire [AXIL_DATA_WIDTH-1:0]          m_axil_kg_rdata,
-    input  wire [1:0]                          m_axil_kg_rresp,
-    input  wire                                m_axil_kg_rvalid,
-    output wire                                m_axil_kg_rready
+    output wire [KG_COUNT*AXIL_ADDR_WIDTH-1:0] m_axil_kg_awaddr,
+    output wire [KG_COUNT*3-1:0]               m_axil_kg_awprot,
+    output wire [KG_COUNT-1:0]                 m_axil_kg_awvalid,
+    input  wire [KG_COUNT-1:0]                 m_axil_kg_awready,
+    output wire [KG_COUNT*AXIL_DATA_WIDTH-1:0] m_axil_kg_wdata,
+    output wire [KG_COUNT*AXIL_STRB_WIDTH-1:0] m_axil_kg_wstrb,
+    output wire [KG_COUNT-1:0]                 m_axil_kg_wvalid,
+    input  wire [KG_COUNT-1:0]                 m_axil_kg_wready,
+    input  wire [KG_COUNT*2-1:0]               m_axil_kg_bresp,
+    input  wire [KG_COUNT-1:0]                 m_axil_kg_bvalid,
+    output wire [KG_COUNT-1:0]                 m_axil_kg_bready,
+    output wire [KG_COUNT*AXIL_ADDR_WIDTH-1:0] m_axil_kg_araddr,
+    output wire [KG_COUNT*3-1:0]               m_axil_kg_arprot,
+    output wire [KG_COUNT-1:0]                 m_axil_kg_arvalid,
+    input  wire [KG_COUNT-1:0]                 m_axil_kg_arready,
+    input  wire [KG_COUNT*AXIL_DATA_WIDTH-1:0] m_axil_kg_rdata,
+    input  wire [KG_COUNT*2-1:0]               m_axil_kg_rresp,
+    input  wire [KG_COUNT-1:0]                 m_axil_kg_rvalid,
+    output wire [KG_COUNT-1:0]                 m_axil_kg_rready
 );
 
 // PHC parameters
@@ -334,11 +338,6 @@ parameter TX_FIFO_DEPTH = 32768;
 parameter RX_FIFO_DEPTH = 131072;
 parameter MAX_TX_SIZE = 16384;
 parameter MAX_RX_SIZE = 16384;
-
-// AXI lite interface parameters
-parameter AXIL_DATA_WIDTH = 32;
-parameter AXIL_STRB_WIDTH = (AXIL_DATA_WIDTH/8);
-parameter AXIL_ADDR_WIDTH = BAR0_APERTURE;
 
 parameter IF_AXIL_ADDR_WIDTH = AXIL_ADDR_WIDTH-$clog2(IF_COUNT*2);
 parameter AXIL_CSR_ADDR_WIDTH = IF_AXIL_ADDR_WIDTH-5-$clog2((PORTS_PER_IF+3)/8);

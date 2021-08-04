@@ -1605,32 +1605,36 @@ assign led[2] = qsfp0_rx_status; // green
 parameter AXIL_DATA_WIDTH = 32;
 parameter AXIL_STRB_WIDTH = (AXIL_DATA_WIDTH/8);
 parameter AXIL_ADDR_WIDTH = BAR0_APERTURE;
-wire [AXIL_ADDR_WIDTH-1:0]          axil_kg_awaddr_int;
-wire                                axil_kg_awprot_int;
-wire                                axil_kg_awvalid_int;
-wire                                axil_kg_awready_int;
-wire [AXIL_DATA_WIDTH-1:0]          axil_kg_wdata_int;
-wire [AXIL_STRB_WIDTH-1:0]          axil_kg_wstrb_int;
-wire                                axil_kg_wvalid_int;
-wire                                axil_kg_wready_int;
-wire [1:0]                          axil_kg_bresp_int;
-wire                                axil_kg_bvalid_int;
-wire                                axil_kg_bready_int;
-wire [AXIL_ADDR_WIDTH-1:0]          axil_kg_araddr_int;
-wire [2:0]                          axil_kg_arprot_int;
-wire                                axil_kg_arvalid_int;
-wire                                axil_kg_arready_int;
-wire [AXIL_DATA_WIDTH-1:0]          axil_kg_rdata_int;
-wire [1:0]                          axil_kg_rresp_int;
-wire                                axil_kg_rvalid_int;
-wire                                axil_kg_rready_int;
+parameter AXIL_KG_COUNT = 2;
+
+wire [AXIL_KG_COUNT*AXIL_ADDR_WIDTH-1:0] axil_kg_awaddr_int;
+wire [AXIL_KG_COUNT*3-1:0]               axil_kg_awprot_int;
+wire [AXIL_KG_COUNT-1:0]                 axil_kg_awvalid_int;
+wire [AXIL_KG_COUNT-1:0]                 axil_kg_awready_int;
+wire [AXIL_KG_COUNT*AXIL_DATA_WIDTH-1:0] axil_kg_wdata_int;
+wire [AXIL_KG_COUNT*AXIL_STRB_WIDTH-1:0] axil_kg_wstrb_int;
+wire [AXIL_KG_COUNT-1:0]                 axil_kg_wvalid_int;
+wire [AXIL_KG_COUNT-1:0]                 axil_kg_wready_int;
+wire [AXIL_KG_COUNT*2-1:0]               axil_kg_bresp_int;
+wire [AXIL_KG_COUNT-1:0]                 axil_kg_bvalid_int;
+wire [AXIL_KG_COUNT-1:0]                 axil_kg_bready_int;
+wire [AXIL_KG_COUNT*AXIL_ADDR_WIDTH-1:0] axil_kg_araddr_int;
+wire [AXIL_KG_COUNT*3-1:0]               axil_kg_arprot_int;
+wire [AXIL_KG_COUNT-1:0]                 axil_kg_arvalid_int;
+wire [AXIL_KG_COUNT-1:0]                 axil_kg_arready_int;
+wire [AXIL_KG_COUNT*AXIL_DATA_WIDTH-1:0] axil_kg_rdata_int;
+wire [AXIL_KG_COUNT*2-1:0]               axil_kg_rresp_int;
+wire [AXIL_KG_COUNT-1:0]                 axil_kg_rvalid_int;
+wire [AXIL_KG_COUNT-1:0]                 axil_kg_rready_int;
+
 kugelblitz_offload #(
     .DATA_WIDTH(AXIS_ETH_DATA_WIDTH),
     .KEEP_WIDTH(AXIS_ETH_KEEP_WIDTH),
     .USER_WIDTH(1),
     .AXIL_DATA_WIDTH(AXIL_DATA_WIDTH),
     .AXIL_STRB_WIDTH(AXIL_STRB_WIDTH),
-    .AXIL_ADDR_WIDTH(AXIL_ADDR_WIDTH)
+    .AXIL_ADDR_WIDTH(AXIL_ADDR_WIDTH),
+    .S_COUNT(AXIL_KG_COUNT)
 )
 kugelblitz_offload_inst (
     .qsfp0_tx_clk(qsfp0_tx_clk_int),
