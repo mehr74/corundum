@@ -303,11 +303,6 @@ class TB(object):
             ifg=12, speed=100e9
         )
 
-        dut.sw.setimmediatevalue(0)
-
-        dut.i2c_scl_i.setimmediatevalue(1)
-        dut.i2c_sda_i.setimmediatevalue(1)
-
         dut.qsfp0_modprsl.setimmediatevalue(0)
         dut.qsfp0_intl.setimmediatevalue(1)
 

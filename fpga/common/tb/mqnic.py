@@ -1098,7 +1098,9 @@ class Driver(object):
 
         self.interfaces = []
 
-        for k in range(self.if_count):
+        # TODO: Fix this for two interfaces for k in range(self.if_count):
+        # It gives an error regarding the number of msi interrupts.
+        for k in range(1):
             i = Interface(self, k, self.hw_addr+k*self.if_stride)
             await i.init()
             self.interfaces.append(i)

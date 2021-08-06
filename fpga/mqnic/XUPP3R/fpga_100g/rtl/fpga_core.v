@@ -84,78 +84,78 @@ module fpga_core #
     /*
      * PCIe
      */
-    output wire [AXIS_PCIE_DATA_WIDTH-1:0]    m_axis_rq_tdata,
-    output wire [AXIS_PCIE_KEEP_WIDTH-1:0]    m_axis_rq_tkeep,
-    output wire 			      m_axis_rq_tlast,
-    input wire 				      m_axis_rq_tready,
-    output wire [AXIS_PCIE_RQ_USER_WIDTH-1:0] m_axis_rq_tuser,
-    output wire 			      m_axis_rq_tvalid,
+    output wire [AXIS_PCIE_DATA_WIDTH-1:0]      m_axis_rq_tdata,
+    output wire [AXIS_PCIE_KEEP_WIDTH-1:0]      m_axis_rq_tkeep,
+    output wire 			                    m_axis_rq_tlast,
+    input wire 				                    m_axis_rq_tready,
+    output wire [AXIS_PCIE_RQ_USER_WIDTH-1:0]   m_axis_rq_tuser,
+    output wire 			                    m_axis_rq_tvalid,
 
-    input wire [AXIS_PCIE_DATA_WIDTH-1:0]     s_axis_rc_tdata,
-    input wire [AXIS_PCIE_KEEP_WIDTH-1:0]     s_axis_rc_tkeep,
-    input wire 				      s_axis_rc_tlast,
-    output wire 			      s_axis_rc_tready,
-    input wire [AXIS_PCIE_RC_USER_WIDTH-1:0]  s_axis_rc_tuser,
-    input wire 				      s_axis_rc_tvalid,
+    input wire [AXIS_PCIE_DATA_WIDTH-1:0]       s_axis_rc_tdata,
+    input wire [AXIS_PCIE_KEEP_WIDTH-1:0]       s_axis_rc_tkeep,
+    input wire 				                    s_axis_rc_tlast,
+    output wire 			                    s_axis_rc_tready,
+    input wire [AXIS_PCIE_RC_USER_WIDTH-1:0]    s_axis_rc_tuser,
+    input wire 				                    s_axis_rc_tvalid,
 
-    input wire [AXIS_PCIE_DATA_WIDTH-1:0]     s_axis_cq_tdata,
-    input wire [AXIS_PCIE_KEEP_WIDTH-1:0]     s_axis_cq_tkeep,
-    input wire 				      s_axis_cq_tlast,
-    output wire 			      s_axis_cq_tready,
-    input wire [AXIS_PCIE_CQ_USER_WIDTH-1:0]  s_axis_cq_tuser,
-    input wire 				      s_axis_cq_tvalid,
+    input wire [AXIS_PCIE_DATA_WIDTH-1:0]       s_axis_cq_tdata,
+    input wire [AXIS_PCIE_KEEP_WIDTH-1:0]       s_axis_cq_tkeep,
+    input wire 				                    s_axis_cq_tlast,
+    output wire 			                    s_axis_cq_tready,
+    input wire [AXIS_PCIE_CQ_USER_WIDTH-1:0]    s_axis_cq_tuser,
+    input wire 				                    s_axis_cq_tvalid,
 
-    output wire [AXIS_PCIE_DATA_WIDTH-1:0]    m_axis_cc_tdata,
-    output wire [AXIS_PCIE_KEEP_WIDTH-1:0]    m_axis_cc_tkeep,
-    output wire 			      m_axis_cc_tlast,
-    input wire 				      m_axis_cc_tready,
-    output wire [AXIS_PCIE_CC_USER_WIDTH-1:0] m_axis_cc_tuser,
-    output wire 			      m_axis_cc_tvalid,
+    output wire [AXIS_PCIE_DATA_WIDTH-1:0]      m_axis_cc_tdata,
+    output wire [AXIS_PCIE_KEEP_WIDTH-1:0]      m_axis_cc_tkeep,
+    output wire 			                    m_axis_cc_tlast,
+    input wire 				                    m_axis_cc_tready,
+    output wire [AXIS_PCIE_CC_USER_WIDTH-1:0]   m_axis_cc_tuser,
+    output wire 			                    m_axis_cc_tvalid,
 
-    input wire [RQ_SEQ_NUM_WIDTH-1:0] 	      s_axis_rq_seq_num_0,
-    input wire 				      s_axis_rq_seq_num_valid_0,
-    input wire [RQ_SEQ_NUM_WIDTH-1:0] 	      s_axis_rq_seq_num_1,
-    input wire 				      s_axis_rq_seq_num_valid_1,
+    input wire [RQ_SEQ_NUM_WIDTH-1:0] 	        s_axis_rq_seq_num_0,
+    input wire 				                    s_axis_rq_seq_num_valid_0,
+    input wire [RQ_SEQ_NUM_WIDTH-1:0] 	        s_axis_rq_seq_num_1,
+    input wire 				                    s_axis_rq_seq_num_valid_1,
 
-    input wire [1:0] 			      pcie_tfc_nph_av,
-    input wire [1:0] 			      pcie_tfc_npd_av,
+    input wire [1:0] 			                pcie_tfc_nph_av,
+    input wire [1:0] 			                pcie_tfc_npd_av,
 
-    input wire [2:0] 			      cfg_max_payload,
-    input wire [2:0] 			      cfg_max_read_req,
+    input wire [2:0] 			                cfg_max_payload,
+    input wire [2:0] 			                cfg_max_read_req,
 
-    output wire [9:0] 			      cfg_mgmt_addr,
-    output wire [7:0] 			      cfg_mgmt_function_number,
-    output wire 			      cfg_mgmt_write,
-    output wire [31:0] 			      cfg_mgmt_write_data,
-    output wire [3:0] 			      cfg_mgmt_byte_enable,
-    output wire 			      cfg_mgmt_read,
-    input wire [31:0] 			      cfg_mgmt_read_data,
-    input wire 				      cfg_mgmt_read_write_done,
+    output wire [9:0] 			                cfg_mgmt_addr,
+    output wire [7:0] 			                cfg_mgmt_function_number,
+    output wire 			                    cfg_mgmt_write,
+    output wire [31:0] 			                cfg_mgmt_write_data,
+    output wire [3:0] 			                cfg_mgmt_byte_enable,
+    output wire 			                    cfg_mgmt_read,
+    input wire [31:0] 			                cfg_mgmt_read_data,
+    input wire 				                    cfg_mgmt_read_write_done,
 
-    input wire [7:0] 			      cfg_fc_ph,
-    input wire [11:0] 			      cfg_fc_pd,
-    input wire [7:0] 			      cfg_fc_nph,
-    input wire [11:0] 			      cfg_fc_npd,
-    input wire [7:0] 			      cfg_fc_cplh,
-    input wire [11:0] 			      cfg_fc_cpld,
-    output wire [2:0] 			      cfg_fc_sel,
+    input wire [7:0] 			                cfg_fc_ph,
+    input wire [11:0] 			                cfg_fc_pd,
+    input wire [7:0] 			                cfg_fc_nph,
+    input wire [11:0] 			                cfg_fc_npd,
+    input wire [7:0] 			                cfg_fc_cplh,
+    input wire [11:0] 			                cfg_fc_cpld,
+    output wire [2:0] 			                cfg_fc_sel,
 
-    input wire [3:0] 			      cfg_interrupt_msi_enable,
-    input wire [11:0] 			      cfg_interrupt_msi_mmenable,
-    input wire 				      cfg_interrupt_msi_mask_update,
-    input wire [31:0] 			      cfg_interrupt_msi_data,
-    output wire [3:0] 			      cfg_interrupt_msi_select,
-    output wire [31:0] 			      cfg_interrupt_msi_int,
-    output wire [31:0] 			      cfg_interrupt_msi_pending_status,
-    output wire 			      cfg_interrupt_msi_pending_status_data_enable,
-    output wire [3:0] 			      cfg_interrupt_msi_pending_status_function_num,
-    input wire 				      cfg_interrupt_msi_sent,
-    input wire 				      cfg_interrupt_msi_fail,
-    output wire [2:0] 			      cfg_interrupt_msi_attr,
-    output wire 			      cfg_interrupt_msi_tph_present,
-    output wire [1:0] 			      cfg_interrupt_msi_tph_type,
-    output wire [8:0] 			      cfg_interrupt_msi_tph_st_tag,
-    output wire [3:0] 			      cfg_interrupt_msi_function_number,
+    input wire [3:0] 			                cfg_interrupt_msi_enable,
+    input wire [11:0] 			                cfg_interrupt_msi_mmenable,
+    input wire 				                    cfg_interrupt_msi_mask_update,
+    input wire [31:0] 			                cfg_interrupt_msi_data,
+    output wire [3:0] 			                cfg_interrupt_msi_select,
+    output wire [31:0] 			                cfg_interrupt_msi_int,
+    output wire [31:0] 			                cfg_interrupt_msi_pending_status,
+    output wire 			                    cfg_interrupt_msi_pending_status_data_enable,
+    output wire [3:0] 			                cfg_interrupt_msi_pending_status_function_num,
+    input wire 				                    cfg_interrupt_msi_sent,
+    input wire 				                    cfg_interrupt_msi_fail,
+    output wire [2:0] 			                cfg_interrupt_msi_attr,
+    output wire 			                    cfg_interrupt_msi_tph_present,
+    output wire [1:0] 			                cfg_interrupt_msi_tph_type,
+    output wire [8:0] 			                cfg_interrupt_msi_tph_st_tag,
+    output wire [3:0] 			                cfg_interrupt_msi_function_number,
 
     output wire 			      status_error_cor,
     output wire 			      status_error_uncor,
@@ -163,28 +163,28 @@ module fpga_core #
     /*
      * Ethernet: QSFP28
      */
-    input wire 				      qsfp0_tx_clk,
-    input wire 				      qsfp0_tx_rst,
+    input wire 				                qsfp0_tx_clk,
+    input wire 				                qsfp0_tx_rst,
 
-    output wire [AXIS_ETH_DATA_WIDTH-1:0]     qsfp0_tx_axis_tdata,
-    output wire [AXIS_ETH_KEEP_WIDTH-1:0]     qsfp0_tx_axis_tkeep,
-    output wire 			      qsfp0_tx_axis_tvalid,
-    input wire 				      qsfp0_tx_axis_tready,
-    output wire 			      qsfp0_tx_axis_tlast,
-    output wire 			      qsfp0_tx_axis_tuser,
+    output wire [AXIS_ETH_DATA_WIDTH-1:0]   qsfp0_tx_axis_tdata,
+    output wire [AXIS_ETH_KEEP_WIDTH-1:0]   qsfp0_tx_axis_tkeep,
+    output wire 			                qsfp0_tx_axis_tvalid,
+    input wire 				                qsfp0_tx_axis_tready,
+    output wire 			                qsfp0_tx_axis_tlast,
+    output wire 			                qsfp0_tx_axis_tuser,
 
-    output wire [79:0] 			      qsfp0_tx_ptp_time,
-    input wire [79:0] 			      qsfp0_tx_ptp_ts,
-    input wire 				      qsfp0_tx_ptp_ts_valid,
+    output wire [79:0] 			            qsfp0_tx_ptp_time,
+    input wire [79:0] 			            qsfp0_tx_ptp_ts,
+    input wire 				                qsfp0_tx_ptp_ts_valid,
 
-    input wire 				      qsfp0_rx_clk,
-    input wire 				      qsfp0_rx_rst,
+    input wire 				                qsfp0_rx_clk,
+    input wire 				                qsfp0_rx_rst,
 
-    input wire [AXIS_ETH_DATA_WIDTH-1:0]      qsfp0_rx_axis_tdata,
-    input wire [AXIS_ETH_KEEP_WIDTH-1:0]      qsfp0_rx_axis_tkeep,
-    input wire 				      qsfp0_rx_axis_tvalid,
-    input wire 				      qsfp0_rx_axis_tlast,
-    input wire [80+1-1:0] 		      qsfp0_rx_axis_tuser,
+    input wire [AXIS_ETH_DATA_WIDTH-1:0]    qsfp0_rx_axis_tdata,
+    input wire [AXIS_ETH_KEEP_WIDTH-1:0]    qsfp0_rx_axis_tkeep,
+    input wire 				                qsfp0_rx_axis_tvalid,
+    input wire 				                qsfp0_rx_axis_tlast,
+    input wire [80+1-1:0] 		            qsfp0_rx_axis_tuser,
 
     output wire [79:0] 			      qsfp0_rx_ptp_time,
 
@@ -966,96 +966,6 @@ rq_reg (
 
 assign cfg_fc_sel = 3'b100;
 
-   /*
-ila_0 ila_desc (
-    .clk(clk_250mhz),
-    .trig_out(),
-    .trig_out_ack(1'b0),
-    .trig_in(1'b0),
-    .trig_in_ack(),
-    .probe0({pcie_dma_read_desc_pcie_addr, pcie_dma_read_desc_ram_sel, pcie_dma_read_desc_ram_addr, pcie_dma_read_desc_tag, pcie_dma_read_desc_status_tag, pcie_dma_write_desc_pcie_addr, pcie_dma_write_desc_ram_sel, pcie_dma_write_desc_ram_addr, pcie_dma_write_desc_tag, pcie_dma_write_desc_status_tag}),
-    .probe1(0),
-    .probe2(0),
-    .probe3(0),
-    .probe4({pcie_dma_read_desc_valid, pcie_dma_read_desc_ready, pcie_dma_read_desc_len, pcie_dma_read_desc_status_valid, pcie_dma_write_desc_valid, pcie_dma_write_desc_ready, pcie_dma_write_desc_len, pcie_dma_write_desc_status_valid, status_error_cor_int, status_error_uncor_int}),
-    .probe5(0)
-);
-
-ila_0 ila_rq (
-    .clk(clk_250mhz),
-    .trig_out(),
-    .trig_out_ack(1'b0),
-    .trig_in(1'b0),
-    .trig_in_ack(),
-    .probe0(m_axis_rq_tdata),
-    .probe1(m_axis_rq_tkeep),
-    .probe2(m_axis_rq_tvalid),
-    .probe3(m_axis_rq_tready),
-    .probe4(m_axis_rq_tuser),
-    .probe5(m_axis_rq_tlast)
-);
-
-    */
-ila_0 ila_sfp (
-    .clk(clk_250mhz),
-    .trig_out(),
-    .trig_out_ack(1'b0),
-    .trig_in(1'b0),
-    .trig_in_ack(),
-    .probe0({qsfp1_modprsel, qsfp1_intl, qsfp1_resetl, qsfp1_mgt_refclk_1_p, qsfp_mgr_refclk_1_n, qsfp0_rx1_n, qsfp0_rx1_p, qsfp0_rx2_n, qsfp0_rx2_p}),
-    .probe1(qsfp0_rx1_n),
-    .probe2({qsfp0_mgt_refclk_0_p,qsfp0_mgt_refclk_0_n}),
-    .probe3(qsfp0_resetl),
-    .probe4({qsfp0_modprsl,qsfp_ctl_en, fpga_i2c_master_l}),
-    .probe5(qsfp0_intl)
-);
-
-	       /*
-ila_0 ila_rc (
-    .clk(clk_250mhz),
-    .trig_out(),
-    .trig_out_ack(1'b0),
-    .trig_in(1'b0),
-    .trig_in_ack(),
-    .probe0(axis_rc_tdata_r),
-    .probe1(axis_rc_tkeep_r),
-    .probe2(axis_rc_tvalid_r),
-    .probe3(axis_rc_tready_r),
-    .probe4({axis_rc_tuser_r, dma_if_pcie_us_inst.dma_if_pcie_us_rd_inst.req_state_reg, dma_if_pcie_us_inst.dma_if_pcie_us_rd_inst.tlp_state_reg, dma_if_pcie_us_inst.dma_if_pcie_us_rd_inst.ram_mask_reg}),
-    .probe5(axis_rc_tlast_r)
-);
-
-ila_0 ila_mem (
-    .clk(clk_250mhz),
-    .trig_out(),
-    .trig_out_ack(1'b0),
-    .trig_in(1'b0),
-    .trig_in_ack(),
-    .probe0({dma_ram_wr_cmd_valid, dma_ram_wr_cmd_ready, dma_ram_wr_cmd_sel, if_dma_ram_wr_cmd_valid, if_dma_ram_wr_cmd_ready, if_dma_ram_wr_cmd_sel }),
-// iface[0].interface_inst.desc_dma_ram_wr_cmd_valid, iface[0].interface_inst.desc_dma_ram_wr_cmd_ready, iface[0].interface_inst.port_dma_ram_wr_cmd_valid, iface[0].interface_inst.port_dma_ram_wr_cmd_ready}),
-    .probe1(0),
-    .probe2(0),
-    .probe3(0),
-    .probe4(0),
-    .probe5(0)
-);
-
-	       
-ila_0 ila_w (
-    .clk(clk_250mhz),
-    .trig_out(),
-    .trig_out_ack(1'b0),
-    .trig_in(1'b0),
-    .trig_in_ack(),
-    .probe0(axi_pcie_dma_wdata),
-    .probe1(0),
-    .probe2(axi_pcie_dma_wvalid),
-    .probe3(axi_pcie_dma_wready),
-    .probe4({axi_pcie_dma_wstrb, axi_pcie_dma_awaddr, axi_pcie_dma_awid, axi_pcie_dma_awlen, axi_pcie_dma_awvalid, axi_pcie_dma_awready, dbg}),
-    .probe5(axi_pcie_dma_wlast)
-);
-*/
-   
 wire [7:0] pcie_tx_fc_nph_av = cfg_fc_nph;
 wire [7:0] pcie_tx_fc_ph_av = cfg_fc_ph;
 wire [11:0] pcie_tx_fc_pd_av = cfg_fc_pd;

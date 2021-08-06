@@ -148,37 +148,6 @@ wire pcie_user_clk;
 wire pcie_user_reset;
 
 
-   /*
-ila_0 ila_rq (
-    .clk(pcie_user_clk),
-    .trig_out(),
-    .trig_out_ack(1'b0),
-    .trig_in(1'b0),
-    .trig_in_ack(),
-    .probe0(axis_rq_tdata),
-    .probe1(axis_rq_tkeep),
-    .probe2(axis_rq_tvalid),
-    .probe3(axis_rq_tready),
-    .probe4({pcie_tfc_npd_av, pcie_tfc_nph_av, axis_rq_tuser}),
-    .probe5(axis_rq_tlast)
-);
-
-ila_0 ila_rc (
-    .clk(pcie_user_clk),
-    .trig_out(),
-    .trig_out_ack(1'b0),
-    .trig_in(1'b0),
-    .trig_in_ack(),
-    .probe0(axis_rc_tdata),
-    .probe1(axis_rc_tkeep),
-    .probe2(axis_rc_tvalid),
-    .probe3(axis_rc_tready),
-    .probe4(axis_rc_tuser),
-    .probe5(axis_rc_tlast)
-);
-   
-    */
-   
 wire cfgmclk_int;
 
 wire clk_322mhz_ref_int;
