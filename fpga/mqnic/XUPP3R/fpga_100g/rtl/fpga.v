@@ -1606,6 +1606,8 @@ kugelblitz_offload #(
     .S_COUNT(AXIL_KG_COUNT)
 )
 kugelblitz_offload_inst (
+    .s_axil_clk(pcie_user_clk),
+    .s_axil_rst(pcie_user_reset),
     .qsfp0_tx_clk(qsfp0_tx_clk_int),
     .qsfp0_tx_rst(qsfp0_tx_rst_int),
     .qsfp0_rx_clk(qsfp0_rx_clk_int),

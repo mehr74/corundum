@@ -23,6 +23,8 @@ module kugelblitz_offload #
     parameter S_COUNT = 2
 )
     (
+        input wire                    s_axil_clk,
+        input wire                    s_axil_rst,
         input wire                    qsfp0_tx_clk,
         input wire                    qsfp0_tx_rst,
         input wire                    qsfp0_rx_clk,
@@ -32,9 +34,7 @@ module kugelblitz_offload #
         input wire                    qsfp1_rx_clk,
         input wire                    qsfp1_rx_rst,
 
-        /*
-         * AXI input qsfp0
-         */
+        // tx from cmac_pad (originally from fpga core)
         input  wire [DATA_WIDTH-1:0]  qsfp0_tx_s_axis_tdata,
         input  wire [KEEP_WIDTH-1:0]  qsfp0_tx_s_axis_tkeep,
         input  wire                   qsfp0_tx_s_axis_tvalid,
@@ -42,15 +42,14 @@ module kugelblitz_offload #
         input  wire                   qsfp0_tx_s_axis_tlast,
         input  wire [USER_WIDTH-1:0]  qsfp0_tx_s_axis_tuser,
 
+        // rx to fpga core
         output wire [DATA_WIDTH-1:0]  qsfp0_rx_m_axis_tdata,
         output wire [KEEP_WIDTH-1:0]  qsfp0_rx_m_axis_tkeep,
         output wire                   qsfp0_rx_m_axis_tvalid,
         output wire                   qsfp0_rx_m_axis_tlast,
         output wire [USER_WIDTH-1:0]  qsfp0_rx_m_axis_tuser,
 
-        /*
-         * AXI output qsfp0
-         */
+        // tx to cmac
         output wire [DATA_WIDTH-1:0]  qsfp0_tx_m_axis_tdata,
         output wire [KEEP_WIDTH-1:0]  qsfp0_tx_m_axis_tkeep,
         output wire                   qsfp0_tx_m_axis_tvalid,
@@ -58,15 +57,14 @@ module kugelblitz_offload #
         output wire                   qsfp0_tx_m_axis_tlast,
         output wire [USER_WIDTH-1:0]  qsfp0_tx_m_axis_tuser,
 
+        // rx from cmac
         input  wire [DATA_WIDTH-1:0]  qsfp0_rx_s_axis_tdata,
         input  wire [KEEP_WIDTH-1:0]  qsfp0_rx_s_axis_tkeep,
         input  wire                   qsfp0_rx_s_axis_tvalid,
         input  wire                   qsfp0_rx_s_axis_tlast,
         input  wire [USER_WIDTH-1:0]  qsfp0_rx_s_axis_tuser,
 
-        /*
-         * AXI input qsfp1
-         */
+        // tx from cmac_pad (originally from fpga_core)
         input  wire [DATA_WIDTH-1:0]  qsfp1_tx_s_axis_tdata,
         input  wire [KEEP_WIDTH-1:0]  qsfp1_tx_s_axis_tkeep,
         input  wire                   qsfp1_tx_s_axis_tvalid,
@@ -74,15 +72,14 @@ module kugelblitz_offload #
         input  wire                   qsfp1_tx_s_axis_tlast,
         input  wire [USER_WIDTH-1:0]  qsfp1_tx_s_axis_tuser,
 
+        // rx to fpga_core
         output wire [DATA_WIDTH-1:0]  qsfp1_rx_m_axis_tdata,
         output wire [KEEP_WIDTH-1:0]  qsfp1_rx_m_axis_tkeep,
         output wire                   qsfp1_rx_m_axis_tvalid,
         output wire                   qsfp1_rx_m_axis_tlast,
         output wire [USER_WIDTH-1:0]  qsfp1_rx_m_axis_tuser,
 
-        /*
-         * AXI output qsfp1
-         */
+        // tx to cmac
         output wire [DATA_WIDTH-1:0]  qsfp1_tx_m_axis_tdata,
         output wire [KEEP_WIDTH-1:0]  qsfp1_tx_m_axis_tkeep,
         output wire                   qsfp1_tx_m_axis_tvalid,
@@ -90,6 +87,7 @@ module kugelblitz_offload #
         output wire                   qsfp1_tx_m_axis_tlast,
         output wire [USER_WIDTH-1:0]  qsfp1_tx_m_axis_tuser,
 
+        // rx from cmac
         input  wire [DATA_WIDTH-1:0]  qsfp1_rx_s_axis_tdata,
         input  wire [KEEP_WIDTH-1:0]  qsfp1_rx_s_axis_tkeep,
         input  wire                   qsfp1_rx_s_axis_tvalid,
@@ -144,8 +142,8 @@ module kugelblitz_offload #
                 .STRB_WIDTH(AXIL_STRB_WIDTH)
             )
                 kg_axil_regfile_inst (
-                    .clk(clk),
-                    .rst(rst),
+                    .clk(s_axil_clk),
+                    .rst(s_axil_rst),
                     .s_axil_awaddr(s_axil_awaddr[n*AXIL_ADDR_WIDTH +: AXIL_ADDR_WIDTH]),
                     .s_axil_awprot(s_axil_awprot[n*3 +: 3]),
                     .s_axil_awvalid(s_axil_awvalid[n]),
