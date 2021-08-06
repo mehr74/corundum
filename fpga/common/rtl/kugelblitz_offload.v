@@ -136,7 +136,7 @@ module kugelblitz_offload #
     generate
         genvar n;
         for (n = 0; n < S_COUNT; n = n + 1) begin : iaxil
-            kugelblitz_axil_regfile #(
+            axil_kg_regfile #(
                 .DATA_WIDTH(AXIL_DATA_WIDTH),
                 .ADDR_WIDTH(AXIL_ADDR_WIDTH),
                 .STRB_WIDTH(AXIL_STRB_WIDTH)
