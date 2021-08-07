@@ -128,10 +128,10 @@ module kugelblitz_offload #
         end
     end
 
-    wire [S_COUNT-1:0] kg_address_valid_int;
-    wire [S_COUNT-1:0] kg_address_int;
-    wire [S_COUNT-1:0] kg_data_valid_int;
-    wire [S_COUNT-1:0] kg_data_int;
+    wire [S_COUNT*AXIL_DATA_WIDTH-1:0] kg_address_valid_int;
+    wire [S_COUNT*AXIL_DATA_WIDTH-1:0] kg_address_int;
+    wire [S_COUNT*AXIL_DATA_WIDTH-1:0] kg_data_valid_int;
+    wire [S_COUNT*AXIL_DATA_WIDTH-1:0] kg_data_int;
 
     generate
         genvar n;
@@ -163,10 +163,10 @@ module kugelblitz_offload #
                     .s_axil_rresp(s_axil_rresp[n*2 +: 2]),
                     .s_axil_rvalid(s_axil_rvalid[n]),
                     .s_axil_rready(s_axil_rready[n]),
-                    .kg_address(kg_address_int[n]),
-                    .kg_address_valid(kg_address_valid_int[n]),
-                    .kg_data(kg_data_int[n]),
-                    .kg_data_valid(kg_data_valid_int[n])
+                    .kg_address(kg_address_int[n*AXIL_DATA_WIDTH +: AXIL_DATA_WIDTH]),
+                    .kg_address_valid(kg_address_valid_int[n*AXIL_DATA_WIDTH +: AXIL_DATA_WIDTH]),
+                    .kg_data(kg_data_int[n*AXIL_DATA_WIDTH +: AXIL_DATA_WIDTH]),
+                    .kg_data_valid(kg_data_valid_int[n*AXIL_DATA_WIDTH +: AXIL_DATA_WIDTH])
                 );
         end
     endgenerate
@@ -174,19 +174,30 @@ module kugelblitz_offload #
     generate
         genvar k;
         for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
-            assign qsfp0_tx_m_axis_tdata[k*8 +: 8] = !qsfp0_tx_s_axis_tkeep[k] ? 8'd0 :
-                (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0] :
-                    qsfp0_tx_s_axis_tdata[k*8 +: 8];
-       
-            assign qsfp0_rx_m_axis_tdata[k*8 +: 8] = !qsfp0_rx_s_axis_tkeep[k] ? 8'd0 :
-                (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0] :
-                    qsfp0_rx_s_axis_tdata[k*8 +: 8];
-            assign qsfp1_tx_m_axis_tdata[k*8 +: 8] = !qsfp1_tx_s_axis_tkeep[k] ? 8'd0 :
-                (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1] :
-                    qsfp1_tx_s_axis_tdata[k*8 +: 8];
-            assign qsfp1_rx_m_axis_tdata[k*8 +: 8] = !qsfp1_rx_s_axis_tkeep[k] ? 8'd0 :
-                (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1] :
-                    qsfp1_rx_s_axis_tdata[k*8 +: 8];
+            if(k == 60) begin
+                // assign constant to qsfp 0
+                assign qsfp0_tx_m_axis_tdata[k*8 +: 8] = !qsfp0_tx_s_axis_tkeep[k] ? 8'd0 : 8'haa;
+                assign qsfp0_rx_m_axis_tdata[k*8 +: 8] = !qsfp0_rx_s_axis_tkeep[k] ? 8'd0 : 8'haa;
+                
+                // assign axil to qsfp 1
+                assign qsfp1_tx_m_axis_tdata[k*8 +: 8] = !qsfp1_tx_s_axis_tkeep[k] ? 8'd0 : kg_data_int[0 +: 8];
+                assign qsfp1_rx_m_axis_tdata[k*8 +: 8] = !qsfp1_rx_s_axis_tkeep[k] ? 8'd0 : kg_data_int[0 +: 8];
+                
+            end else begin
+                assign qsfp0_tx_m_axis_tdata[k*8 +: 8] = !qsfp0_tx_s_axis_tkeep[k] ? 8'd0 :
+                    (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0 +: 8] :
+                        qsfp0_tx_s_axis_tdata[k*8 +: 8];
+           
+                assign qsfp0_rx_m_axis_tdata[k*8 +: 8] = !qsfp0_rx_s_axis_tkeep[k] ? 8'd0 :
+                    (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0 +: 8] :
+                        qsfp0_rx_s_axis_tdata[k*8 +: 8];
+                assign qsfp1_tx_m_axis_tdata[k*8 +: 8] = !qsfp1_tx_s_axis_tkeep[k] ? 8'd0 :
+                    (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1*AXIL_DATA_WIDTH +: 8] :
+                        qsfp1_tx_s_axis_tdata[k*8 +: 8];
+                assign qsfp1_rx_m_axis_tdata[k*8 +: 8] = !qsfp1_rx_s_axis_tkeep[k] ? 8'd0 :
+                    (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1*AXIL_DATA_WIDTH +: 8] :
+                        qsfp1_rx_s_axis_tdata[k*8 +: 8];
+            end
         end
     endgenerate 
 
