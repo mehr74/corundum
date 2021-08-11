@@ -34,9 +34,9 @@ class TB(object):
         if generator:
             self.axil_master.write_if.b_channel.set_pause_generator(generator())
             self.axil_master.read_if.r_channel.set_pause_generator(generator())
-            self.axil_ram.write_if.aw_channel.set_pause_generator(generator())
-            self.axil_ram.write_if.w_channel.set_pause_generator(generator())
-            self.axil_ram.read_if.ar_channel.set_pause_generator(generator())
+            self.axil_master.write_if.aw_channel.set_pause_generator(generator())
+            self.axil_master.write_if.w_channel.set_pause_generator(generator())
+            self.axil_master.read_if.ar_channel.set_pause_generator(generator())
 
     async def cycle_reset(self):
         self.dut.rst.setimmediatevalue(0)

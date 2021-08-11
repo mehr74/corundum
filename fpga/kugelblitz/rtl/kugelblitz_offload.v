@@ -20,7 +20,7 @@ module kugelblitz_offload #
     
     parameter AXIL_ADDR_WIDTH = 32,
 
-    parameter S_COUNT = 2
+    parameter AXIL_COUNT = 2
 )
     (
         input wire                    s_axil_clk,
@@ -94,25 +94,25 @@ module kugelblitz_offload #
         input  wire                   qsfp1_rx_s_axis_tlast,
         input  wire [USER_WIDTH-1:0]  qsfp1_rx_s_axis_tuser,
 
-        input  wire [S_COUNT*AXIL_ADDR_WIDTH-1:0]   s_axil_awaddr,
-        input  wire [S_COUNT*3-1:0]                 s_axil_awprot,
-        input  wire [S_COUNT-1:0]                   s_axil_awvalid,
-        output wire [S_COUNT-1:0]                   s_axil_awready,
-        input  wire [S_COUNT*AXIL_DATA_WIDTH-1:0]   s_axil_wdata,
-        input  wire [S_COUNT*AXIL_STRB_WIDTH-1:0]   s_axil_wstrb,
-        input  wire [S_COUNT-1:0]                   s_axil_wvalid,
-        output wire [S_COUNT-1:0]                   s_axil_wready,
-        output wire [S_COUNT*2-1:0]                 s_axil_bresp,
-        output wire [S_COUNT-1:0]                   s_axil_bvalid,
-        input  wire [S_COUNT-1:0]                   s_axil_bready,
-        input  wire [S_COUNT*AXIL_ADDR_WIDTH-1:0]   s_axil_araddr,
-        input  wire [S_COUNT*3-1:0]                 s_axil_arprot,
-        input  wire [S_COUNT-1:0]                   s_axil_arvalid,
-        output wire [S_COUNT-1:0]                   s_axil_arready,
-        output wire [S_COUNT*AXIL_DATA_WIDTH-1:0]   s_axil_rdata,
-        output wire [S_COUNT*2-1:0]                 s_axil_rresp,
-        output wire [S_COUNT-1:0]                   s_axil_rvalid,
-        input  wire [S_COUNT-1:0]                   s_axil_rready
+        input  wire [AXIL_COUNT*AXIL_ADDR_WIDTH-1:0]   s_axil_awaddr,
+        input  wire [AXIL_COUNT*3-1:0]                 s_axil_awprot,
+        input  wire [AXIL_COUNT-1:0]                   s_axil_awvalid,
+        output wire [AXIL_COUNT-1:0]                   s_axil_awready,
+        input  wire [AXIL_COUNT*AXIL_DATA_WIDTH-1:0]   s_axil_wdata,
+        input  wire [AXIL_COUNT*AXIL_STRB_WIDTH-1:0]   s_axil_wstrb,
+        input  wire [AXIL_COUNT-1:0]                   s_axil_wvalid,
+        output wire [AXIL_COUNT-1:0]                   s_axil_wready,
+        output wire [AXIL_COUNT*2-1:0]                 s_axil_bresp,
+        output wire [AXIL_COUNT-1:0]                   s_axil_bvalid,
+        input  wire [AXIL_COUNT-1:0]                   s_axil_bready,
+        input  wire [AXIL_COUNT*AXIL_ADDR_WIDTH-1:0]   s_axil_araddr,
+        input  wire [AXIL_COUNT*3-1:0]                 s_axil_arprot,
+        input  wire [AXIL_COUNT-1:0]                   s_axil_arvalid,
+        output wire [AXIL_COUNT-1:0]                   s_axil_arready,
+        output wire [AXIL_COUNT*AXIL_DATA_WIDTH-1:0]   s_axil_rdata,
+        output wire [AXIL_COUNT*2-1:0]                 s_axil_rresp,
+        output wire [AXIL_COUNT-1:0]                   s_axil_rvalid,
+        input  wire [AXIL_COUNT-1:0]                   s_axil_rready
     );
 
 // check configuration
@@ -128,14 +128,14 @@ module kugelblitz_offload #
         end
     end
 
-    wire [S_COUNT*AXIL_DATA_WIDTH-1:0] kg_address_valid_int;
-    wire [S_COUNT*AXIL_DATA_WIDTH-1:0] kg_address_int;
-    wire [S_COUNT*AXIL_DATA_WIDTH-1:0] kg_data_valid_int;
-    wire [S_COUNT*AXIL_DATA_WIDTH-1:0] kg_data_int;
+    wire [AXIL_COUNT*AXIL_DATA_WIDTH-1:0] kg_address_valid_int;
+    wire [AXIL_COUNT*AXIL_DATA_WIDTH-1:0] kg_address_int;
+    wire [AXIL_COUNT*AXIL_DATA_WIDTH-1:0] kg_data_valid_int;
+    wire [AXIL_COUNT*AXIL_DATA_WIDTH-1:0] kg_data_int;
 
     generate
         genvar n;
-        for (n = 0; n < S_COUNT; n = n + 1) begin : iaxil
+        for (n = 0; n < AXIL_COUNT; n = n + 1) begin : iaxil
             axil_kg_regfile #(
                 .DATA_WIDTH(AXIL_DATA_WIDTH),
                 .ADDR_WIDTH(AXIL_ADDR_WIDTH),
