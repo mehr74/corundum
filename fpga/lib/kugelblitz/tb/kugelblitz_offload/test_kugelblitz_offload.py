@@ -1,7 +1,7 @@
 import logging
 import os
 import subprocess
-from random import random
+import random
 
 import cocotb
 import cocotb_test.simulator
@@ -82,14 +82,14 @@ class TB(object):
             dut.qsfp1_rx_rst
         )
 
-        s_axil_count = len(dut.axil_kugelblitz_offload_inst.s_axil_awvalid)
+        s_axil_count = len(dut.kugelblitz_offload_inst.kg_s_axil_awvalid)
         self.log.info("len : %d", s_axil_count)
 
         self.axil_master = [AxiLiteMaster(
             AxiLiteBus.from_prefix(dut, f"s{k:02d}_axil"),
             dut.s_axil_clk,
             dut.s_axil_rst
-        ) for k in range(1)]
+        ) for k in range(s_axil_count)]
 
     async def cycle_reset(self):
         self.dut.s_axil_rst.setimmediatevalue(0)
@@ -102,19 +102,22 @@ class TB(object):
         await RisingEdge(self.dut.s_axil_clk)
         await RisingEdge(self.dut.s_axil_clk)
 
+
 async def run_test_kugelblitz_axil_write(dut):
     tb = TB(dut)
 
-    byte_lanes = tb.axil_master.write_if.byte_lanes
+    byte_lanes = tb.axil_master[0].write_if.byte_lanes
     tb.log.info("axil byte lanes : %d", byte_lanes)
     await tb.cycle_reset()
 
     for length in range(1, byte_lanes+1):
         tb.log.info("length %d", length)
+
         test_kg_address_valid = bytearray([random.randint(0, 255) for x in range(length)])
         test_kg_address = bytearray([random.randint(0, 255) for x in range(length)])
         test_kg_data_valid = bytearray([random.randint(0, 255) for x in range(length)])
         test_kg_data = bytearray([random.randint(0, 255) for x in range(length)])
+
         await tb.axil_master[0].write(0, test_kg_address_valid)
         await tb.axil_master[0].write(4, test_kg_address)
         await tb.axil_master[0].write(8, test_kg_data_valid)
@@ -124,13 +127,32 @@ async def run_test_kugelblitz_axil_write(dut):
         test_kg_address_check = await tb.axil_master[0].read(4, 4)
         test_kg_data_valid_check = await tb.axil_master[0].read(8, 4)
         test_kg_data_check = await tb.axil_master[0].read(12, 4)
+        
+        tb.log.info("kg_address_valid (w: %d ,r:%d)",
+                    int.from_bytes(test_kg_address_valid, "little"),
+                    int.from_bytes(test_kg_address_valid_check.data, "little"))
 
+        tb.log.info("kg_address       (w: %d ,r:%d)",
+                    int.from_bytes(test_kg_address, "little"),
+                    int.from_bytes(test_kg_address_check.data, "little"))
 
+        tb.log.info("kg_data_valid    (w: %d ,r:%d)",
+                    int.from_bytes(test_kg_data_valid, "little"),
+                    int.from_bytes(test_kg_data_valid_check.data, "little"))
 
-        assert tb.dut.kg_address_valid == int.from_bytes(test_kg_address_valid, "little")
-        assert tb.dut.kg_address == int.from_bytes(test_kg_address, "little")
-        assert tb.dut.kg_data_valid == int.from_bytes(test_kg_data_valid, "little")
-        assert tb.dut.kg_data == int.from_bytes(test_kg_data, "little")
+        tb.log.info("kg_data          (w: %d ,r:%d)",
+                    int.from_bytes(test_kg_data, "little"),
+                    int.from_bytes(test_kg_data_check.data, "little"))
+
+        assert int.from_bytes(test_kg_address_valid_check.data, "little") == \
+               int.from_bytes(test_kg_address_valid, "little")
+        assert int.from_bytes(test_kg_address_check.data, "little") == \
+               int.from_bytes(test_kg_address, "little")
+        assert int.from_bytes(test_kg_data_valid_check.data, "little") == \
+               int.from_bytes(test_kg_data_valid, "little")
+        assert int.from_bytes(test_kg_data_check.data, "little") ==\
+               int.from_bytes(test_kg_data, "little")
+
 
 if cocotb.SIM_NAME:
     for test in [run_test_kugelblitz_axil_write]:
