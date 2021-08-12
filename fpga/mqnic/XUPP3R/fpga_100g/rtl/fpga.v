@@ -1603,7 +1603,7 @@ kugelblitz_offload #(
     .AXIL_DATA_WIDTH(AXIL_DATA_WIDTH),
     .AXIL_STRB_WIDTH(AXIL_STRB_WIDTH),
     .AXIL_ADDR_WIDTH(AXIL_ADDR_WIDTH),
-    .S_COUNT(AXIL_KG_COUNT)
+    .AXIL_COUNT(AXIL_KG_COUNT)
 )
 kugelblitz_offload_inst (
     .kg_s_axil_clk(pcie_user_clk),
