@@ -51,8 +51,8 @@ def generate(ports=2, name=None, output=None):
  */
 module {{name}} #
 (
-    parameter DATA_WIDTH = 512,
-    parameter KEEP_WIDTH = (DATA_WIDTH/8),
+    parameter AXIS_ETH_DATA_WIDTH = 512,
+    parameter AXIS_ETH_KEEP_WIDTH = (AXIS_ETH_DATA_WIDTH/8),
     parameter USER_WIDTH = 1,
     parameter AXIL_DATA_WIDTH = 32,
     
@@ -65,38 +65,40 @@ module {{name}} #
     input wire                                                  s_axil_rst,
     
 {%- for p in range(m) %}
-    input wire                                                  qsfps{{'%02d'%p}}_tx_clk,
-    input wire                                                  qsfps{{'%02d'%p}}_tx_rst,
+    input wire                                                  qsfp{{'%01d'%p}}_tx_clk,
+    input wire                                                  qsfp{{'%01d'%p}}_tx_rst,
+    input wire                                                  qsfp{{'%01d'%p}}_rx_clk,
+    input wire                                                  qsfp{{'%01d'%p}}_rx_rst,
 
     // tx from cmac_pad (originally from fpga core)
-    input  wire [DATA_WIDTH-1:0]                                qsfps{{'%02d'%p}}_tx_s_axis_tdata,
-    input  wire [KEEP_WIDTH-1:0]                                qsfps{{'%02d'%p}}_tx_s_axis_tkeep,
-    input  wire                                                 qsfps{{'%02d'%p}}_tx_s_axis_tvalid,
-    output wire                                                 qsfps{{'%02d'%p}}_tx_s_axis_tready,
-    input  wire                                                 qsfps{{'%02d'%p}}_tx_s_axis_tlast,
-    input  wire [USER_WIDTH-1:0]                                qsfps{{'%02d'%p}}_tx_s_axis_tuser,
+    input  wire [AXIS_ETH_DATA_WIDTH-1:0]                                s_qsfp{{'%01d'%p}}_tx_axis_tdata,
+    input  wire [AXIS_ETH_KEEP_WIDTH-1:0]                                s_qsfp{{'%01d'%p}}_tx_axis_tkeep,
+    input  wire                                                 s_qsfp{{'%01d'%p}}_tx_axis_tvalid,
+    output wire                                                 s_qsfp{{'%01d'%p}}_tx_axis_tready,
+    input  wire                                                 s_qsfp{{'%01d'%p}}_tx_axis_tlast,
+    input  wire [USER_WIDTH-1:0]                                s_qsfp{{'%01d'%p}}_tx_axis_tuser,
 
     // rx to fpga core
-    output wire [DATA_WIDTH-1:0]                                qsfps{{'%02d'%p}}_rx_m_axis_tdata,
-    output wire [KEEP_WIDTH-1:0]                                qsfps{{'%02d'%p}}_rx_m_axis_tkeep,
-    output wire                                                 qsfps{{'%02d'%p}}_rx_m_axis_tvalid,
-    output wire                                                 qsfps{{'%02d'%p}}_rx_m_axis_tlast,
-    output wire [USER_WIDTH-1:0]                                qsfps{{'%02d'%p}}_rx_m_axis_tuser,
+    output wire [AXIS_ETH_DATA_WIDTH-1:0]                                m_qsfp{{'%01d'%p}}_rx_axis_tdata,
+    output wire [AXIS_ETH_KEEP_WIDTH-1:0]                                m_qsfp{{'%01d'%p}}_rx_axis_tkeep,
+    output wire                                                 m_qsfp{{'%01d'%p}}_rx_axis_tvalid,
+    output wire                                                 m_qsfp{{'%01d'%p}}_rx_axis_tlast,
+    output wire [81-1:0]                                m_qsfp{{'%01d'%p}}_rx_axis_tuser,
 
     // tx to cmac
-    output wire [DATA_WIDTH-1:0]                                qsfps{{'%02d'%p}}_tx_m_axis_tdata,
-    output wire [KEEP_WIDTH-1:0]                                qsfps{{'%02d'%p}}_tx_m_axis_tkeep,
-    output wire                                                 qsfps{{'%02d'%p}}_tx_m_axis_tvalid,
-    input  wire                                                 qsfps{{'%02d'%p}}_tx_m_axis_tready,
-    output wire                                                 qsfps{{'%02d'%p}}_tx_m_axis_tlast,
-    output wire [USER_WIDTH-1:0]                                qsfps{{'%02d'%p}}_tx_m_axis_tuser,
+    output wire [AXIS_ETH_DATA_WIDTH-1:0]                                m_qsfp{{'%01d'%p}}_tx_axis_tdata,
+    output wire [AXIS_ETH_KEEP_WIDTH-1:0]                                m_qsfp{{'%01d'%p}}_tx_axis_tkeep,
+    output wire                                                 m_qsfp{{'%01d'%p}}_tx_axis_tvalid,
+    input  wire                                                 m_qsfp{{'%01d'%p}}_tx_axis_tready,
+    output wire                                                 m_qsfp{{'%01d'%p}}_tx_axis_tlast,
+    output wire [USER_WIDTH-1:0]                                m_qsfp{{'%01d'%p}}_tx_axis_tuser,
 
     // rx from cmac
-    input  wire [DATA_WIDTH-1:0]                                qsfps{{'%02d'%p}}_rx_s_axis_tdata,
-    input  wire [KEEP_WIDTH-1:0]                                qsfps{{'%02d'%p}}_rx_s_axis_tkeep,
-    input  wire                                                 qsfps{{'%02d'%p}}_rx_s_axis_tvalid,
-    input  wire                                                 qsfps{{'%02d'%p}}_rx_s_axis_tlast,
-    input  wire [USER_WIDTH-1:0]                                qsfps{{'%02d'%p}}_rx_s_axis_tuser,
+    input  wire [AXIS_ETH_DATA_WIDTH-1:0]                                s_qsfp{{'%01d'%p}}_rx_axis_tdata,
+    input  wire [AXIS_ETH_KEEP_WIDTH-1:0]                                s_qsfp{{'%01d'%p}}_rx_axis_tkeep,
+    input  wire                                                 s_qsfp{{'%01d'%p}}_rx_axis_tvalid,
+    input  wire                                                 s_qsfp{{'%01d'%p}}_rx_axis_tlast,
+    input  wire [81-1:0]                                s_qsfp{{'%01d'%p}}_rx_axis_tuser,
 
     input  wire [AXIL_ADDR_WIDTH-1:0]                           s{{'%02d'%p}}_axil_awaddr,
     input  wire [2:0]                                           s{{'%02d'%p}}_axil_awprot,
@@ -123,8 +125,8 @@ module {{name}} #
     localparam PORT_COUNT = {{m}};
 
     kugelblitz_offload #(
-        .DATA_WIDTH(DATA_WIDTH),
-        .KEEP_WIDTH(KEEP_WIDTH),
+        .AXIS_ETH_DATA_WIDTH(AXIS_ETH_DATA_WIDTH),
+        .AXIS_ETH_KEEP_WIDTH(AXIS_ETH_KEEP_WIDTH),
         .USER_WIDTH(USER_WIDTH),
         .AXIL_DATA_WIDTH(AXIL_DATA_WIDTH),
         .AXIL_STRB_WIDTH(AXIL_STRB_WIDTH),
@@ -132,9 +134,13 @@ module {{name}} #
         .PORT_COUNT(PORT_COUNT)
     )
     kugelblitz_offload_inst (
-            .kg_s_axil_clk(s_axil_clk),
-            .kg_s_axil_rst(s_axil_rst),
-
+            .kg_axil_clk(s_axil_clk),
+            .kg_axil_rst(s_axil_rst),
+            .kg_port_tx_clk          ( { {% for p in range(m-1,-1,-1) %} qsfp{{'%01d'%p}}_tx_clk{% if not loop.last %}, {% endif %}{% endfor %} }                                 ),
+            .kg_port_tx_rst          ( { {% for p in range(m-1,-1,-1) %} qsfp{{'%01d'%p}}_tx_rst{% if not loop.last %}, {% endif %}{% endfor %} }                              ),
+            .kg_port_rx_clk          ( { {% for p in range(m-1,-1,-1) %} qsfp{{'%01d'%p}}_rx_clk{% if not loop.last %}, {% endif %}{% endfor %} }                              ),
+            .kg_port_rx_rst          ( { {% for p in range(m-1,-1,-1) %} qsfp{{'%01d'%p}}_rx_rst{% if not loop.last %}, {% endif %}{% endfor %} }                              ),
+            
             .kg_s_axil_awaddr({ {% for p in range(m-1,-1,-1) %}s{{'%02d'%p}}_axil_awaddr{% if not loop.last %}, {% endif %}{% endfor %} }),
             .kg_s_axil_awprot({ {% for p in range(m-1,-1,-1) %}s{{'%02d'%p}}_axil_awprot{% if not loop.last %}, {% endif %}{% endfor %} }),
             .kg_s_axil_awvalid({ {% for p in range(m-1,-1,-1) %}s{{'%02d'%p}}_axil_awvalid{% if not loop.last %}, {% endif %}{% endfor %} }),
@@ -153,45 +159,41 @@ module {{name}} #
             .kg_s_axil_rdata({ {% for p in range(m-1,-1,-1) %}s{{'%02d'%p}}_axil_rdata{% if not loop.last %}, {% endif %}{% endfor %} }),
             .kg_s_axil_rresp({ {% for p in range(m-1,-1,-1) %}s{{'%02d'%p}}_axil_rresp{% if not loop.last %}, {% endif %}{% endfor %} }),
             .kg_s_axil_rvalid({ {% for p in range(m-1,-1,-1) %}s{{'%02d'%p}}_axil_rvalid{% if not loop.last %}, {% endif %}{% endfor %} }),
-            .kg_s_axil_rready({ {% for p in range(m-1,-1,-1) %}s{{'%02d'%p}}_axil_rready{% if not loop.last %}, {% endif %}{% endfor %} })
+            .kg_s_axil_rready({ {% for p in range(m-1,-1,-1) %}s{{'%02d'%p}}_axil_rready{% if not loop.last %}, {% endif %}{% endfor %} }),
             
             // port from IO to kugelblitz
-            .kg_m_port_tx_clk          ( qsfps{{'%02'%p}}_tx_m_clk                                 ),  
-            .kg_m_port_tx_rst          ( qsfps{{'%02'%p}}_tx_m_tx_rst                              ),
-            .kg_m_port_tx_axis_tdata   ( qsfps{{'%02'%p}}_tx_m_tx_axis_tdata                       ),
-            .kg_m_port_tx_axis_tkeep   ( qsfps{{'%02'%p}}_tx_m_tx_axis_tkeep                       ),
-            .kg_m_port_tx_axis_tvalid  ( qsfps{{'%02'%p}}_tx_m_tx_axis_tvalid                      ),
-            .kg_m_port_tx_axis_tready  ( qsfps{{'%02'%p}}_tx_m_tx_axis_tready                      ),
-            .kg_m_port_tx_axis_tlast   ( qsfps{{'%02'%p}}_tx_m_tx_axis_tlast                       ),
-            .kg_m_port_tx_axis_tuser   ( qsfps{{'%02'%p}}_tx_m_tx_axis_tuser                       ),
-            .kg_m_port_tx_ptp_ts       ( qsfps{{'%02'%p}}_tx_m_tx_ptp_ts                           ),
-            .kg_m_port_tx_ptp_ts_valid ( qsfps{{'%02'%p}}_tx_m_tx_ptp_ts_valid                     ),
+            .kg_m_port_tx_axis_tdata   ( { {% for p in range(m-1,-1,-1) %} m_qsfp{{'%01d'%p}}_tx_axis_tdata{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_m_port_tx_axis_tkeep   ( { {% for p in range(m-1,-1,-1) %} m_qsfp{{'%01d'%p}}_tx_axis_tkeep{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_m_port_tx_axis_tvalid  ( { {% for p in range(m-1,-1,-1) %} m_qsfp{{'%01d'%p}}_tx_axis_tvalid{% if not loop.last %}, {% endif %}{% endfor %} }                      ),
+            .kg_m_port_tx_axis_tready  ( { {% for p in range(m-1,-1,-1) %} m_qsfp{{'%01d'%p}}_tx_axis_tready{% if not loop.last %}, {% endif %}{% endfor %} }                      ),
+            .kg_m_port_tx_axis_tlast   ( { {% for p in range(m-1,-1,-1) %} m_qsfp{{'%01d'%p}}_tx_axis_tlast{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_m_port_tx_axis_tuser   ( { {% for p in range(m-1,-1,-1) %} m_qsfp{{'%01d'%p}}_tx_axis_tuser{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_m_port_tx_ptp_ts       ( ),
+            .kg_m_port_tx_ptp_ts_valid ( ),
 
             // port from IO to kugelblitz
-            .kg_s_port_rx_clk          ( qsfps{{'%02'%p}}_rx_s_rx_clk                              ),
-            .kg_s_port_rx_rst          ( qsfps{{'%02'%p}}_rx_s_rx_rst                              ),
-            .kg_s_port_rx_axis_tdata   ( qsfps{{'%02'%p}}_rx_s_rx_axis_tdata                       ),
-            .kg_s_port_rx_axis_tkeep   ( qsfps{{'%02'%p}}_rx_s_rx_axis_tkeep                       ),
-            .kg_s_port_rx_axis_tvalid  ( qsfps{{'%02'%p}}_rx_s_rx_axis_tvalid                      ),
-            .kg_s_port_rx_axis_tlast   ( qsfps{{'%02'%p}}_rx_s_rx_axis_tlast                       ),
-            .kg_s_port_rx_axis_tuser   ( qsfps{{'%02'%p}}_rx_s_rx_axis_tuser                       ),
+            .kg_s_port_rx_axis_tdata   ( { {% for p in range(m-1,-1,-1) %} s_qsfp{{'%01d'%p}}_rx_axis_tdata{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_s_port_rx_axis_tkeep   ( { {% for p in range(m-1,-1,-1) %} s_qsfp{{'%01d'%p}}_rx_axis_tkeep{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_s_port_rx_axis_tvalid  ( { {% for p in range(m-1,-1,-1) %} s_qsfp{{'%01d'%p}}_rx_axis_tvalid{% if not loop.last %}, {% endif %}{% endfor %} }                      ),
+            .kg_s_port_rx_axis_tlast   ( { {% for p in range(m-1,-1,-1) %} s_qsfp{{'%01d'%p}}_rx_axis_tlast{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_s_port_rx_axis_tuser   ( { {% for p in range(m-1,-1,-1) %} s_qsfp{{'%01d'%p}}_rx_axis_tuser{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
 
             // port from kugelblitz to corundum
-            .kg_s_port_tx_axis_tdata   ( qsfps{{'%02'%p}}_tx_s_tx_axis_tdata                       ),
-            .kg_s_port_tx_axis_tkeep   ( qsfps{{'%02'%p}}_tx_s_tx_axis_tkeep                       ),
-            .kg_s_port_tx_axis_tvalid  ( qsfps{{'%02'%p}}_tx_s_tx_axis_tvalid                      ),
-            .kg_s_port_tx_axis_tready  ( qsfps{{'%02'%p}}_tx_s_tx_axis_tready                      ),
-            .kg_s_port_tx_axis_tlast   ( qsfps{{'%02'%p}}_tx_s_tx_axis_tlast                       ),
-            .kg_s_port_tx_axis_tuser   ( qsfps{{'%02'%p}}_tx_s_tx_axis_tuser                       ),
-            .kg_s_port_tx_ptp_ts       ( qsfps{{'%02'%p}}_tx_s_tx_ptp_ts                           ),
-            .kg_s_port_tx_ptp_ts_valid ( qsfps{{'%02'%p}}_tx_s_tx_ptp_ts_valid                     ),
+            .kg_s_port_tx_axis_tdata   ( { {% for p in range(m-1,-1,-1) %} s_qsfp{{'%01d'%p}}_tx_axis_tdata{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_s_port_tx_axis_tkeep   ( { {% for p in range(m-1,-1,-1) %} s_qsfp{{'%01d'%p}}_tx_axis_tkeep{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_s_port_tx_axis_tvalid  ( { {% for p in range(m-1,-1,-1) %} s_qsfp{{'%01d'%p}}_tx_axis_tvalid{% if not loop.last %}, {% endif %}{% endfor %} }                      ),
+            .kg_s_port_tx_axis_tready  ( { {% for p in range(m-1,-1,-1) %} s_qsfp{{'%01d'%p}}_tx_axis_tready{% if not loop.last %}, {% endif %}{% endfor %} }                      ),
+            .kg_s_port_tx_axis_tlast   ( { {% for p in range(m-1,-1,-1) %} s_qsfp{{'%01d'%p}}_tx_axis_tlast{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_s_port_tx_axis_tuser   ( { {% for p in range(m-1,-1,-1) %} s_qsfp{{'%01d'%p}}_tx_axis_tuser{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_s_port_tx_ptp_ts       ( ),
+            .kg_s_port_tx_ptp_ts_valid ( ),
 
             // port from kugelblitz to corundum
-            .kg_m_port_rx_axis_tdata   ( qsfps{{'%02'%p}}_rx_m_rx_axis_tdata                       ),
-            .kg_m_port_rx_axis_tkeep   ( qsfps{{'%02'%p}}_rx_m_rx_axis_tkeep                       ),
-            .kg_m_port_rx_axis_tvalid  ( qsfps{{'%02'%p}}_rx_m_rx_axis_tvalid                      ),
-            .kg_m_port_rx_axis_tlast   ( qsfps{{'%02'%p}}_rx_m_rx_axis_tlast                       ),
-            .kg_m_port_rx_axis_tuse    ( qsfps{{'%02'%p}}_rx_m_rx_axis_tuse                        ),
+            .kg_m_port_rx_axis_tdata   ( { {% for p in range(m-1,-1,-1) %} m_qsfp{{'%01d'%p}}_rx_axis_tdata{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_m_port_rx_axis_tkeep   ( { {% for p in range(m-1,-1,-1) %} m_qsfp{{'%01d'%p}}_rx_axis_tkeep{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_m_port_rx_axis_tvalid  ( { {% for p in range(m-1,-1,-1) %} m_qsfp{{'%01d'%p}}_rx_axis_tvalid{% if not loop.last %}, {% endif %}{% endfor %} }                      ),
+            .kg_m_port_rx_axis_tlast   ( { {% for p in range(m-1,-1,-1) %} m_qsfp{{'%01d'%p}}_rx_axis_tlast{% if not loop.last %}, {% endif %}{% endfor %} }                       ),
+            .kg_m_port_rx_axis_tuser   ( { {% for p in range(m-1,-1,-1) %} m_qsfp{{'%01d'%p}}_rx_axis_tuse{% if not loop.last %}, {% endif %}{% endfor %} }                        )
     );
 
 endmodule

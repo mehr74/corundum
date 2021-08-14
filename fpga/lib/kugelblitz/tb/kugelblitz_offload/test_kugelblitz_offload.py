@@ -21,67 +21,67 @@ class TB(object):
         self.log.setLevel(logging.DEBUG)
         
         cocotb.fork(Clock(dut.s_axil_clk, 10, units="ns").start())
-        cocotb.fork(Clock(dut.qsfp0_tx_clk, 10, units="ns").start())
-        cocotb.fork(Clock(dut.qsfp0_rx_clk, 10, units="ns").start())
-        cocotb.fork(Clock(dut.qsfp1_tx_clk, 10, units="ns").start())
-        cocotb.fork(Clock(dut.qsfp1_rx_clk, 10, units="ns").start())
-
-        # tx from cmac_pad (originally fpga_core)
-        self.qsfp0_tx_s_axis = AxiStreamSource(
-            AxiStreamBus.from_prefix(dut, "qsfp0_tx_s_axis"), 
-            dut.qsfp0_tx_clk, 
-            dut.qsfp0_tx_rst
-        )
-
-        # rx to fpag_core
-        self.qsfp0_rx_m_axis = AxiStreamSink(
-            AxiStreamBus.from_prefix(dut, "qsfp0_rx_m_axis"),
-            dut.qsfp0_rx_clk,
-            dut.qsfp0_rx_rst
-        )
-
-        # tx to cmac
-        self.qsfp0_tx_m_axis = AxiStreamSink(
-            AxiStreamBus.from_prefix(dut, "qsfp0_tx_m_axis"),
-            dut.qsfp0_tx_clk,
-            dut.qsfp0_tx_rst
-        )
-
-        # rx from cmac
-        self.qsfp0_rx_s_axis = AxiStreamSource(
-            AxiStreamBus.from_prefix(dut, "qsfp0_rx_m_axis"),
-            dut.qsfp0_rx_clk,
-            dut.qsfp0_rx_rst
-        )
-
-        # tx from cmac_pad (originally fpga_core)
-        self.qsfp1_tx_s_axis = AxiStreamSource(
-            AxiStreamBus.from_prefix(dut, "qsfp1_tx_s_axis"),
-            dut.qsfp1_tx_clk,
-            dut.qsfp1_tx_rst
-        )
-
-        # rx to fpag_core
-        self.qsfp1_rx_m_axis = AxiStreamSink(
-            AxiStreamBus.from_prefix(dut, "qsfp1_rx_m_axis"),
-            dut.qsfp1_rx_clk,
-            dut.qsfp1_rx_rst
-        )
-
-        # tx to cmac
-        self.qsfp1_tx_m_axis = AxiStreamSink(
-            AxiStreamBus.from_prefix(dut, "qsfp0_tx_m_axis"),
-            dut.qsfp1_tx_clk,
-            dut.qsfp1_tx_rst
-        )
-
-        # rx from cmac
-        self.qsfp1_rx_s_axis = AxiStreamSource(
-            AxiStreamBus.from_prefix(dut, "qsfp1_rx_m_axis"),
-            dut.qsfp1_rx_clk,
-            dut.qsfp1_rx_rst
-        )
-
+#        cocotb.fork(Clock(dut.qsfp0_tx_clk, 10, units="ns").start())
+#        cocotb.fork(Clock(dut.qsfp0_rx_clk, 10, units="ns").start())
+#        cocotb.fork(Clock(dut.qsfp1_tx_clk, 10, units="ns").start())
+#        cocotb.fork(Clock(dut.qsfp1_rx_clk, 10, units="ns").start())
+#
+#        # tx from cmac_pad (originally fpga_core)
+#        self.qsfp0_tx_s_axis = AxiStreamSource(
+#            AxiStreamBus.from_prefix(dut, "qsfp0_tx_s_axis"),
+#            dut.qsfp0_tx_clk,
+#            dut.qsfp0_tx_rst
+#        )
+#
+#        # rx to fpag_core
+#        self.qsfp0_rx_m_axis = AxiStreamSink(
+#            AxiStreamBus.from_prefix(dut, "qsfp0_rx_m_axis"),
+#            dut.qsfp0_rx_clk,
+#            dut.qsfp0_rx_rst
+#        )
+#
+#        # tx to cmac
+#        self.qsfp0_tx_m_axis = AxiStreamSink(
+#            AxiStreamBus.from_prefix(dut, "qsfp0_tx_m_axis"),
+#            dut.qsfp0_tx_clk,
+#            dut.qsfp0_tx_rst
+#        )
+#
+#        # rx from cmac
+#        self.qsfp0_rx_s_axis = AxiStreamSource(
+#            AxiStreamBus.from_prefix(dut, "qsfp0_rx_m_axis"),
+#            dut.qsfp0_rx_clk,
+#            dut.qsfp0_rx_rst
+#        )
+#
+#        # tx from cmac_pad (originally fpga_core)
+#        self.qsfp1_tx_s_axis = AxiStreamSource(
+#            AxiStreamBus.from_prefix(dut, "qsfp1_tx_s_axis"),
+#            dut.qsfp1_tx_clk,
+#            dut.qsfp1_tx_rst
+#        )
+#
+#        # rx to fpag_core
+#        self.qsfp1_rx_m_axis = AxiStreamSink(
+#            AxiStreamBus.from_prefix(dut, "qsfp1_rx_m_axis"),
+#            dut.qsfp1_rx_clk,
+#            dut.qsfp1_rx_rst
+#        )
+#
+#        # tx to cmac
+#        self.qsfp1_tx_m_axis = AxiStreamSink(
+#            AxiStreamBus.from_prefix(dut, "qsfp0_tx_m_axis"),
+#            dut.qsfp1_tx_clk,
+#            dut.qsfp1_tx_rst
+#        )
+#
+#        # rx from cmac
+#        self.qsfp1_rx_s_axis = AxiStreamSource(
+#            AxiStreamBus.from_prefix(dut, "qsfp1_rx_m_axis"),
+#            dut.qsfp1_rx_clk,
+#            dut.qsfp1_rx_rst
+#        )
+#
         s_axil_count = len(dut.kugelblitz_offload_inst.kg_s_axil_awvalid)
         self.log.info("len : %d", s_axil_count)
 

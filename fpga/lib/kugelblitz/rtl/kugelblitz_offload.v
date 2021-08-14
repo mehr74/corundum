@@ -8,9 +8,9 @@
 module kugelblitz_offload #
 (
     // Width of AXI stream interfaces in bits
-    parameter DATA_WIDTH = 512,
+    parameter AXIS_ETH_DATA_WIDTH = 512,
     // tkeep signal width (words per cycle)
-    parameter KEEP_WIDTH = (DATA_WIDTH/8),
+    parameter AXIS_ETH_KEEP_WIDTH = (AXIS_ETH_DATA_WIDTH/8),
     // tuser signal width
     parameter USER_WIDTH = 1,
     
@@ -23,8 +23,12 @@ module kugelblitz_offload #
     parameter PORT_COUNT = 2
 )
     (
-        input  wire                                        kg_s_axil_clk,
-        input  wire                                        kg_s_axil_rst,
+        input  wire                                        kg_axil_clk,
+        input  wire                                        kg_axil_rst,
+        input  wire [PORT_COUNT-1:0]                       kg_port_tx_clk,
+        input  wire [PORT_COUNT-1:0]                       kg_port_tx_rst,
+        input  wire [PORT_COUNT-1:0]                       kg_port_rx_clk,
+        input  wire [PORT_COUNT-1:0]                       kg_port_rx_rst,
 
         input  wire [PORT_COUNT*AXIL_ADDR_WIDTH-1:0]       kg_s_axil_awaddr,
         input  wire [PORT_COUNT*3-1:0]                     kg_s_axil_awprot,
@@ -47,8 +51,6 @@ module kugelblitz_offload #
         input  wire [PORT_COUNT-1:0]                       kg_s_axil_rready,
 
         // port from IO to kugelblitz
-        input  wire [PORT_COUNT-1:0]                       kg_m_port_tx_clk,
-        input  wire [PORT_COUNT-1:0]                       kg_m_port_tx_rst,
         output wire [PORT_COUNT*AXIS_ETH_DATA_WIDTH-1:0]   kg_m_port_tx_axis_tdata,
         output wire [PORT_COUNT*AXIS_ETH_KEEP_WIDTH-1:0]   kg_m_port_tx_axis_tkeep,
         output wire [PORT_COUNT-1:0]                       kg_m_port_tx_axis_tvalid,
@@ -59,8 +61,6 @@ module kugelblitz_offload #
         input  wire [PORT_COUNT-1:0]                       kg_m_port_tx_ptp_ts_valid,
 
         // port from IO to kugelblitz
-        input  wire [PORT_COUNT-1:0]                       kg_s_port_rx_clk,
-        input  wire [PORT_COUNT-1:0]                       kg_s_port_rx_rst,
         input  wire [PORT_COUNT*AXIS_ETH_DATA_WIDTH-1:0]   kg_s_port_rx_axis_tdata,
         input  wire [PORT_COUNT*AXIS_ETH_KEEP_WIDTH-1:0]   kg_s_port_rx_axis_tkeep,
         input  wire [PORT_COUNT-1:0]                       kg_s_port_rx_axis_tvalid,
@@ -87,12 +87,12 @@ module kugelblitz_offload #
 
     // check configuration
     initial begin
-        if (DATA_WIDTH != 512) begin
+        if (AXIS_ETH_DATA_WIDTH != 512) begin
             $error("Error: AXI stream data width must be 512 (instance %m)");
             $finish;
         end
 
-        if (KEEP_WIDTH * 8 != DATA_WIDTH) begin
+        if (AXIS_ETH_KEEP_WIDTH * 8 != AXIS_ETH_DATA_WIDTH) begin
             $error("Error: AXI stream interface requires byte (8-bit) granularity (instance %m)");
             $finish;
         end
@@ -112,8 +112,8 @@ module kugelblitz_offload #
                 .STRB_WIDTH(AXIL_STRB_WIDTH)
             )
                 kg_axil_regfile_inst (
-                    .clk(kg_s_axil_clk),
-                    .rst(kg_s_axil_rst),
+                    .clk(kg_axil_clk),
+                    .rst(kg_axil_rst),
 
                     .s_axil_awaddr      ( kg_s_axil_awaddr[n*AXIL_ADDR_WIDTH +: AXIL_ADDR_WIDTH]        ),
                     .s_axil_awprot      ( kg_s_axil_awprot[n*3 +: 3]                                    ),
@@ -147,7 +147,7 @@ module kugelblitz_offload #
         genvar k;
         genvar i;
         for (i = 0; i < PORT_COUNT; i = i + 1) begin
-            for (k = 0; k < KEEP_WIDTH; k = k + 1) begin
+            for (k = 0; k < AXIS_ETH_KEEP_WIDTH; k = k + 1) begin
                 if(k == 60) begin
                     // assign constant to kg_qsfp 0
                     assign kg_m_port_tx_axis_tdata[k*8 +: 8] = !kg_s_port_tx_axis_tkeep[k] ? 8'd0 : 8'haa;

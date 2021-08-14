@@ -52,11 +52,11 @@ module fpga (
     inout  wire         i2c_sda,
 */
 
-    /* enables sfp? */	     
+    /* enables sfp? */
     output wire        qsfp_ctl_en,
     wire 	       fpga_i2c_master_l,
 
-	   
+
     /*
      * PCI express
      */
@@ -251,7 +251,7 @@ wire qsfp1_modprsl_int;
 wire qsfp0_intl_int;
 wire qsfp1_intl_int;
 
-/*   
+/*
 wire i2c_scl_i;
 wire i2c_scl_o;
 wire i2c_scl_t;
@@ -273,8 +273,8 @@ end
 
 
  */
-   
-// GPIO                                                                                                 
+
+// GPIO
 wire qsfp0_i2c_scl_i;
 wire qsfp0_i2c_scl_o;
 wire qsfp0_i2c_scl_t;
@@ -323,7 +323,7 @@ sync_signal_inst (
 
 // assign i2c_scl = i2c_scl_t_reg ? 1'bz : i2c_scl_o_reg;
 // assign i2c_sda = i2c_sda_t_reg ? 1'bz : i2c_sda_o_reg;
-   
+
 assign qsfp0_i2c_scl = qsfp0_i2c_scl_t_reg ? 1'bz : qsfp0_i2c_scl_o_reg;
 assign qsfp0_i2c_sda = qsfp0_i2c_sda_t_reg ? 1'bz : qsfp0_i2c_sda_o_reg;
 assign qsfp1_i2c_scl = qsfp1_i2c_scl_t_reg ? 1'bz : qsfp1_i2c_scl_o_reg;
@@ -342,7 +342,7 @@ debounce_switch_inst (
     .out({sw_int})
 );
 */
-   
+
 
 // Flash
 wire qspi_clk_int;
@@ -1724,7 +1724,7 @@ core_inst (
     .i2c_sda_o(i2c_sda_o),
     .i2c_sda_t(i2c_sda_t),
 */
-	   
+
     /*
      * PCIe
      */
@@ -1880,27 +1880,7 @@ core_inst (
     .qspi_dq_i(qspi_dq_i_int),
     .qspi_dq_o(qspi_dq_o_int),
     .qspi_dq_oe(qspi_dq_oe_int),
-    .qspi_cs(qspi_cs_int),
-
-    .m_axil_kg_awaddr(axil_kg_awaddr_int),
-    .m_axil_kg_awprot(axil_kg_awprot_int),
-    .m_axil_kg_awvalid(axil_kg_awvalid_int),
-    .m_axil_kg_awready(axil_kg_awready_int),
-    .m_axil_kg_wdata(axil_kg_wdata_int),
-    .m_axil_kg_wstrb(axil_kg_wstrb_int),
-    .m_axil_kg_wvalid(axil_kg_wvalid_int),
-    .m_axil_kg_wready(axil_kg_wready_int),
-    .m_axil_kg_bresp(axil_kg_bresp_int),
-    .m_axil_kg_bvalid(axil_kg_bvalid_int),
-    .m_axil_kg_bready(axil_kg_bready_int),
-    .m_axil_kg_araddr(axil_kg_araddr_int),
-    .m_axil_kg_arprot(axil_kg_arprot_int),
-    .m_axil_kg_arvalid(axil_kg_arvalid_int),
-    .m_axil_kg_arready(axil_kg_arready_int),
-    .m_axil_kg_rdata(axil_kg_rdata_int),
-    .m_axil_kg_rresp(axil_kg_rresp_int),
-    .m_axil_kg_rvalid(axil_kg_rvalid_int),
-    .m_axil_kg_rready(axil_kg_rready_int)
+    .qspi_cs(qspi_cs_int)
 );
 
 endmodule
