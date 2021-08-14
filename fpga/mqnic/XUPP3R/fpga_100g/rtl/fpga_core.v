@@ -248,9 +248,7 @@ module fpga_core #
     input wire [3:0]                                  qspi_dq_i,
     output wire [3:0]                                 qspi_dq_o,
     output wire [3:0]                                 qspi_dq_oe,
-    output wire                                       qspi_cs,
-
-
+    output wire                                       qspi_cs
 );
 
     // PHC parameters
@@ -2737,13 +2735,13 @@ module fpga_core #
                 assign rx_axis_tuser[m +: 1] = rx_axis_tuser_int[m*81 +: 1];
 
                 kugelblitz_offload #(
-                    AXIS_ETH_DATA_WIDTH(AXIS_DATA_WIDTH),
-                    AXIS_ETH_KEEP_WIDTH(AXIS_ETH_KEEP_WIDTH),
-                    USER_WIDTH(1),
-                    AXIL_DATA_WIDTH(AXIL_DATA_WIDTH),
-                    AXIL_STRB_WIDTH(AXIL_STRB_WIDTH),
-                    AXIL_ADDR_WIDTH(AXIL_ADDR_WIDTH),
-                    PORT_COUNT(2)
+                    .AXIS_ETH_DATA_WIDTH(AXIS_ETH_DATA_WIDTH),
+                    .AXIS_ETH_KEEP_WIDTH(AXIS_ETH_KEEP_WIDTH),
+                    .USER_WIDTH(1),
+                    .AXIL_DATA_WIDTH(AXIL_DATA_WIDTH),
+                    .AXIL_STRB_WIDTH(AXIL_STRB_WIDTH),
+                    .AXIL_ADDR_WIDTH(AXIL_ADDR_WIDTH),
+                    .PORT_COUNT(2)
                 )
                 kugelblitz_offload_inst (
                     .kg_axil_clk(clk_250mhz),
