@@ -52,11 +52,11 @@ module fpga (
     inout  wire         i2c_sda,
 */
 
-    /* enables sfp? */
+    /* enables sfp? */	     
     output wire        qsfp_ctl_en,
     wire 	       fpga_i2c_master_l,
 
-
+	   
     /*
      * PCI express
      */
@@ -148,6 +148,37 @@ wire pcie_user_clk;
 wire pcie_user_reset;
 
 
+   /*
+ila_0 ila_rq (
+    .clk(pcie_user_clk),
+    .trig_out(),
+    .trig_out_ack(1'b0),
+    .trig_in(1'b0),
+    .trig_in_ack(),
+    .probe0(axis_rq_tdata),
+    .probe1(axis_rq_tkeep),
+    .probe2(axis_rq_tvalid),
+    .probe3(axis_rq_tready),
+    .probe4({pcie_tfc_npd_av, pcie_tfc_nph_av, axis_rq_tuser}),
+    .probe5(axis_rq_tlast)
+);
+
+ila_0 ila_rc (
+    .clk(pcie_user_clk),
+    .trig_out(),
+    .trig_out_ack(1'b0),
+    .trig_in(1'b0),
+    .trig_in_ack(),
+    .probe0(axis_rc_tdata),
+    .probe1(axis_rc_tkeep),
+    .probe2(axis_rc_tvalid),
+    .probe3(axis_rc_tready),
+    .probe4(axis_rc_tuser),
+    .probe5(axis_rc_tlast)
+);
+   
+    */
+   
 wire cfgmclk_int;
 
 wire clk_322mhz_ref_int;
@@ -251,7 +282,7 @@ wire qsfp1_modprsl_int;
 wire qsfp0_intl_int;
 wire qsfp1_intl_int;
 
-/*
+/*   
 wire i2c_scl_i;
 wire i2c_scl_o;
 wire i2c_scl_t;
@@ -273,8 +304,8 @@ end
 
 
  */
-
-// GPIO
+   
+// GPIO                                                                                                 
 wire qsfp0_i2c_scl_i;
 wire qsfp0_i2c_scl_o;
 wire qsfp0_i2c_scl_t;
@@ -323,7 +354,7 @@ sync_signal_inst (
 
 // assign i2c_scl = i2c_scl_t_reg ? 1'bz : i2c_scl_o_reg;
 // assign i2c_sda = i2c_sda_t_reg ? 1'bz : i2c_sda_o_reg;
-
+   
 assign qsfp0_i2c_scl = qsfp0_i2c_scl_t_reg ? 1'bz : qsfp0_i2c_scl_o_reg;
 assign qsfp0_i2c_sda = qsfp0_i2c_sda_t_reg ? 1'bz : qsfp0_i2c_sda_o_reg;
 assign qsfp1_i2c_scl = qsfp1_i2c_scl_t_reg ? 1'bz : qsfp1_i2c_scl_o_reg;
@@ -342,7 +373,7 @@ debounce_switch_inst (
     .out({sw_int})
 );
 */
-
+   
 
 // Flash
 wire qspi_clk_int;
@@ -825,13 +856,6 @@ wire                           qsfp0_tx_axis_tready_int;
 wire                           qsfp0_tx_axis_tlast_int;
 wire                           qsfp0_tx_axis_tuser_int;
 
-wire [AXIS_ETH_DATA_WIDTH-1:0] qsfp0_kg_tx_axis_tdata;
-wire [AXIS_ETH_KEEP_WIDTH-1:0] qsfp0_kg_tx_axis_tkeep;
-wire                           qsfp0_kg_tx_axis_tvalid;
-wire                           qsfp0_kg_tx_axis_tready;
-wire                           qsfp0_kg_tx_axis_tlast;
-wire                           qsfp0_kg_tx_axis_tuser;
-
 wire [AXIS_ETH_DATA_WIDTH-1:0] qsfp0_mac_tx_axis_tdata;
 wire [AXIS_ETH_KEEP_WIDTH-1:0] qsfp0_mac_tx_axis_tkeep;
 wire                           qsfp0_mac_tx_axis_tvalid;
@@ -845,12 +869,6 @@ wire                           qsfp0_tx_ptp_ts_valid_int;
 
 wire                           qsfp0_rx_clk_int;
 wire                           qsfp0_rx_rst_int;
-
-wire [AXIS_ETH_DATA_WIDTH-1:0] qsfp0_rx_axis_tdata_kg;
-wire [AXIS_ETH_KEEP_WIDTH-1:0] qsfp0_rx_axis_tkeep_kg;
-wire                           qsfp0_rx_axis_tvalid_kg;
-wire                           qsfp0_rx_axis_tlast_kg;
-wire [80+1-1:0]                qsfp0_rx_axis_tuser_kg;
 
 wire [AXIS_ETH_DATA_WIDTH-1:0] qsfp0_rx_axis_tdata_int;
 wire [AXIS_ETH_KEEP_WIDTH-1:0] qsfp0_rx_axis_tkeep_int;
@@ -873,13 +891,6 @@ wire                           qsfp1_tx_axis_tready_int;
 wire                           qsfp1_tx_axis_tlast_int;
 wire                           qsfp1_tx_axis_tuser_int;
 
-wire [AXIS_ETH_DATA_WIDTH-1:0] qsfp1_kg_tx_axis_tdata;
-wire [AXIS_ETH_KEEP_WIDTH-1:0] qsfp1_kg_tx_axis_tkeep;
-wire                           qsfp1_kg_tx_axis_tvalid;
-wire                           qsfp1_kg_tx_axis_tready;
-wire                           qsfp1_kg_tx_axis_tlast;
-wire                           qsfp1_kg_tx_axis_tuser;
-
 wire [AXIS_ETH_DATA_WIDTH-1:0] qsfp1_mac_tx_axis_tdata;
 wire [AXIS_ETH_KEEP_WIDTH-1:0] qsfp1_mac_tx_axis_tkeep;
 wire                           qsfp1_mac_tx_axis_tvalid;
@@ -893,12 +904,6 @@ wire                           qsfp1_tx_ptp_ts_valid_int;
 
 wire                           qsfp1_rx_clk_int;
 wire                           qsfp1_rx_rst_int;
-
-wire [AXIS_ETH_DATA_WIDTH-1:0] qsfp1_rx_axis_tdata_kg;
-wire [AXIS_ETH_KEEP_WIDTH-1:0] qsfp1_rx_axis_tkeep_kg;
-wire                           qsfp1_rx_axis_tvalid_kg;
-wire                           qsfp1_rx_axis_tlast_kg;
-wire [80+1-1:0]                qsfp1_rx_axis_tuser_kg;
 
 wire [AXIS_ETH_DATA_WIDTH-1:0] qsfp1_rx_axis_tdata_int;
 wire [AXIS_ETH_KEEP_WIDTH-1:0] qsfp1_rx_axis_tkeep_int;
@@ -937,12 +942,12 @@ qsfp0_cmac_pad_inst (
     .s_axis_tlast(qsfp0_tx_axis_tlast_int),
     .s_axis_tuser(qsfp0_tx_axis_tuser_int),
 
-    .m_axis_tdata(qsfp0_kg_tx_axis_tdata),
-    .m_axis_tkeep(qsfp0_kg_tx_axis_tkeep),
-    .m_axis_tvalid(qsfp0_kg_tx_axis_tvalid),
-    .m_axis_tready(qsfp0_kg_tx_axis_tready),
-    .m_axis_tlast(qsfp0_kg_tx_axis_tlast),
-    .m_axis_tuser(qsfp0_kg_tx_axis_tuser)
+    .m_axis_tdata(qsfp0_mac_tx_axis_tdata),
+    .m_axis_tkeep(qsfp0_mac_tx_axis_tkeep),
+    .m_axis_tvalid(qsfp0_mac_tx_axis_tvalid),
+    .m_axis_tready(qsfp0_mac_tx_axis_tready),
+    .m_axis_tlast(qsfp0_mac_tx_axis_tlast),
+    .m_axis_tuser(qsfp0_mac_tx_axis_tuser)
 );
 
 cmac_usplus_0
@@ -1260,12 +1265,12 @@ qsfp1_cmac_pad_inst (
     .s_axis_tlast(qsfp1_tx_axis_tlast_int),
     .s_axis_tuser(qsfp1_tx_axis_tuser_int),
 
-    .m_axis_tdata(qsfp1_kg_tx_axis_tdata),
-    .m_axis_tkeep(qsfp1_kg_tx_axis_tkeep),
-    .m_axis_tvalid(qsfp1_kg_tx_axis_tvalid),
-    .m_axis_tready(qsfp1_kg_tx_axis_tready),
-    .m_axis_tlast(qsfp1_kg_tx_axis_tlast),
-    .m_axis_tuser(qsfp1_kg_tx_axis_tuser)
+    .m_axis_tdata(qsfp1_mac_tx_axis_tdata),
+    .m_axis_tkeep(qsfp1_mac_tx_axis_tkeep),
+    .m_axis_tvalid(qsfp1_mac_tx_axis_tvalid),
+    .m_axis_tready(qsfp1_mac_tx_axis_tready),
+    .m_axis_tlast(qsfp1_mac_tx_axis_tlast),
+    .m_axis_tuser(qsfp1_mac_tx_axis_tuser)
 );
 
 cmac_usplus_1
@@ -1570,126 +1575,6 @@ assign led[0] = led_int[0]; // red
 assign led[1] = qsfp1_rx_status; // yellow
 assign led[2] = qsfp0_rx_status; // green
 
-// AXI lite interface parameters
-parameter AXIL_DATA_WIDTH = 32;
-parameter AXIL_STRB_WIDTH = (AXIL_DATA_WIDTH/8);
-parameter AXIL_ADDR_WIDTH = BAR0_APERTURE;
-parameter AXIL_KG_COUNT = 2;
-
-wire [AXIL_KG_COUNT*AXIL_ADDR_WIDTH-1:0] axil_kg_awaddr_int;
-wire [AXIL_KG_COUNT*3-1:0]               axil_kg_awprot_int;
-wire [AXIL_KG_COUNT-1:0]                 axil_kg_awvalid_int;
-wire [AXIL_KG_COUNT-1:0]                 axil_kg_awready_int;
-wire [AXIL_KG_COUNT*AXIL_DATA_WIDTH-1:0] axil_kg_wdata_int;
-wire [AXIL_KG_COUNT*AXIL_STRB_WIDTH-1:0] axil_kg_wstrb_int;
-wire [AXIL_KG_COUNT-1:0]                 axil_kg_wvalid_int;
-wire [AXIL_KG_COUNT-1:0]                 axil_kg_wready_int;
-wire [AXIL_KG_COUNT*2-1:0]               axil_kg_bresp_int;
-wire [AXIL_KG_COUNT-1:0]                 axil_kg_bvalid_int;
-wire [AXIL_KG_COUNT-1:0]                 axil_kg_bready_int;
-wire [AXIL_KG_COUNT*AXIL_ADDR_WIDTH-1:0] axil_kg_araddr_int;
-wire [AXIL_KG_COUNT*3-1:0]               axil_kg_arprot_int;
-wire [AXIL_KG_COUNT-1:0]                 axil_kg_arvalid_int;
-wire [AXIL_KG_COUNT-1:0]                 axil_kg_arready_int;
-wire [AXIL_KG_COUNT*AXIL_DATA_WIDTH-1:0] axil_kg_rdata_int;
-wire [AXIL_KG_COUNT*2-1:0]               axil_kg_rresp_int;
-wire [AXIL_KG_COUNT-1:0]                 axil_kg_rvalid_int;
-wire [AXIL_KG_COUNT-1:0]                 axil_kg_rready_int;
-
-kugelblitz_offload #(
-    .DATA_WIDTH(AXIS_ETH_DATA_WIDTH),
-    .KEEP_WIDTH(AXIS_ETH_KEEP_WIDTH),
-    .USER_WIDTH(1),
-    .AXIL_DATA_WIDTH(AXIL_DATA_WIDTH),
-    .AXIL_STRB_WIDTH(AXIL_STRB_WIDTH),
-    .AXIL_ADDR_WIDTH(AXIL_ADDR_WIDTH),
-    .AXIL_COUNT(AXIL_KG_COUNT)
-)
-kugelblitz_offload_inst (
-    .kg_s_axil_clk(pcie_user_clk),
-    .kg_s_axil_rst(pcie_user_reset),
-    .kg_qsfp0_tx_clk(qsfp0_tx_clk_int),
-    .kg_qsfp0_tx_rst(qsfp0_tx_rst_int),
-    .kg_qsfp0_rx_clk(qsfp0_rx_clk_int),
-    .kg_qsfp0_rx_rst(qsfp0_rx_rst_int),
-    .kg_qsfp1_tx_clk(qsfp1_tx_clk_int),
-    .kg_qsfp1_tx_rst(qsfp1_tx_rst_int),
-    .kg_qsfp1_rx_clk(qsfp1_rx_clk_int),
-    .kg_qsfp1_rx_rst(qsfp1_rx_rst_int),
-
-    .kg_qsfp0_tx_s_axis_tdata(qsfp0_kg_tx_axis_tdata),
-    .kg_qsfp0_tx_s_axis_tkeep(qsfp0_kg_tx_axis_tkeep),
-    .kg_qsfp0_tx_s_axis_tvalid(qsfp0_kg_tx_axis_tvalid),
-    .kg_qsfp0_tx_s_axis_tready(qsfp0_kg_tx_axis_tready),
-    .kg_qsfp0_tx_s_axis_tlast(qsfp0_kg_tx_axis_tlast),
-    .kg_qsfp0_tx_s_axis_tuser(qsfp0_kg_tx_axis_tuser),
-
-    .kg_qsfp0_rx_m_axis_tdata(qsfp0_rx_axis_tdata_kg),
-    .kg_qsfp0_rx_m_axis_tkeep(qsfp0_rx_axis_tkeep_kg),
-    .kg_qsfp0_rx_m_axis_tvalid(qsfp0_rx_axis_tvalid_kg),
-    .kg_qsfp0_rx_m_axis_tlast(qsfp0_rx_axis_tlast_kg),
-    .kg_qsfp0_rx_m_axis_tuser(qsfp0_rx_axis_tuser_kg),
-
-    .kg_qsfp0_tx_m_axis_tdata(qsfp0_mac_tx_axis_tdata),
-    .kg_qsfp0_tx_m_axis_tkeep(qsfp0_mac_tx_axis_tkeep),
-    .kg_qsfp0_tx_m_axis_tvalid(qsfp0_mac_tx_axis_tvalid),
-    .kg_qsfp0_tx_m_axis_tready(qsfp0_mac_tx_axis_tready),
-    .kg_qsfp0_tx_m_axis_tlast(qsfp0_mac_tx_axis_tlast),
-    .kg_qsfp0_tx_m_axis_tuser(qsfp0_mac_tx_axis_tuser),
-
-    .kg_qsfp0_rx_s_axis_tdata(qsfp0_rx_axis_tdata_int),
-    .kg_qsfp0_rx_s_axis_tkeep(qsfp0_rx_axis_tkeep_int),
-    .kg_qsfp0_rx_s_axis_tvalid(qsfp0_rx_axis_tvalid_int),
-    .kg_qsfp0_rx_s_axis_tlast(qsfp0_rx_axis_tlast_int),
-    .kg_qsfp0_rx_s_axis_tuser(qsfp0_rx_axis_tuser_int),
-
-    .kg_qsfp1_tx_s_axis_tdata(qsfp1_kg_tx_axis_tdata),
-    .kg_qsfp1_tx_s_axis_tkeep(qsfp1_kg_tx_axis_tkeep),
-    .kg_qsfp1_tx_s_axis_tvalid(qsfp1_kg_tx_axis_tvalid),
-    .kg_qsfp1_tx_s_axis_tready(qsfp1_kg_tx_axis_tready),
-    .kg_qsfp1_tx_s_axis_tlast(qsfp1_kg_tx_axis_tlast),
-    .kg_qsfp1_tx_s_axis_tuser(qsfp1_kg_tx_axis_tuser),
-
-    .kg_qsfp1_rx_m_axis_tdata(qsfp1_rx_axis_tdata_kg),
-    .kg_qsfp1_rx_m_axis_tkeep(qsfp1_rx_axis_tkeep_kg),
-    .kg_qsfp1_rx_m_axis_tvalid(qsfp1_rx_axis_tvalid_kg),
-    .kg_qsfp1_rx_m_axis_tlast(qsfp1_rx_axis_tlast_kg),
-    .kg_qsfp1_rx_m_axis_tuser(qsfp1_rx_axis_tuser_kg),
-
-    .kg_qsfp1_tx_m_axis_tdata(qsfp1_mac_tx_axis_tdata),
-    .kg_qsfp1_tx_m_axis_tkeep(qsfp1_mac_tx_axis_tkeep),
-    .kg_qsfp1_tx_m_axis_tvalid(qsfp1_mac_tx_axis_tvalid),
-    .kg_qsfp1_tx_m_axis_tready(qsfp1_mac_tx_axis_tready),
-    .kg_qsfp1_tx_m_axis_tlast(qsfp1_mac_tx_axis_tlast),
-    .kg_qsfp1_tx_m_axis_tuser(qsfp1_mac_tx_axis_tuser),
-
-    .kg_qsfp1_rx_s_axis_tdata(qsfp1_rx_axis_tdata_int),
-    .kg_qsfp1_rx_s_axis_tkeep(qsfp1_rx_axis_tkeep_int),
-    .kg_qsfp1_rx_s_axis_tvalid(qsfp1_rx_axis_tvalid_int),
-    .kg_qsfp1_rx_s_axis_tlast(qsfp1_rx_axis_tlast_int),
-    .kg_qsfp1_rx_s_axis_tuser(qsfp1_rx_axis_tuser_int),
-
-    .kg_s_axil_awaddr(axil_kg_awaddr_int),
-    .kg_s_axil_awprot(axil_kg_awprot_int),
-    .kg_s_axil_awvalid(axil_kg_awvalid_int),
-    .kg_s_axil_awready(axil_kg_awready_int),
-    .kg_s_axil_wdata(axil_kg_wdata_int),
-    .kg_s_axil_wstrb(axil_kg_wstrb_int),
-    .kg_s_axil_wvalid(axil_kg_wvalid_int),
-    .kg_s_axil_wready(axil_kg_wready_int),
-    .kg_s_axil_bresp(axil_kg_bresp_int),
-    .kg_s_axil_bvalid(axil_kg_bvalid_int),
-    .kg_s_axil_bready(axil_kg_bready_int),
-    .kg_s_axil_araddr(axil_kg_araddr_int),
-    .kg_s_axil_arprot(axil_kg_arprot_int),
-    .kg_s_axil_arvalid(axil_kg_arvalid_int),
-    .kg_s_axil_arready(axil_kg_arready_int),
-    .kg_s_axil_rdata(axil_kg_rdata_int),
-    .kg_s_axil_rresp(axil_kg_rresp_int),
-    .kg_s_axil_rvalid(axil_kg_rvalid_int),
-    .kg_s_axil_rready(axil_kg_rready_int)
-);
-
 fpga_core #(
     .AXIS_PCIE_DATA_WIDTH(AXIS_PCIE_DATA_WIDTH),
     .AXIS_PCIE_KEEP_WIDTH(AXIS_PCIE_KEEP_WIDTH),
@@ -1724,7 +1609,7 @@ core_inst (
     .i2c_sda_o(i2c_sda_o),
     .i2c_sda_t(i2c_sda_t),
 */
-
+	   
     /*
      * PCIe
      */
@@ -1820,11 +1705,11 @@ core_inst (
     .qsfp0_tx_ptp_ts_valid(qsfp0_tx_ptp_ts_valid_int),
     .qsfp0_rx_clk(qsfp0_rx_clk_int),
     .qsfp0_rx_rst(qsfp0_rx_rst_int),
-    .qsfp0_rx_axis_tdata(qsfp0_rx_axis_tdata_kg),
-    .qsfp0_rx_axis_tkeep(qsfp0_rx_axis_tkeep_kg),
-    .qsfp0_rx_axis_tvalid(qsfp0_rx_axis_tvalid_kg),
-    .qsfp0_rx_axis_tlast(qsfp0_rx_axis_tlast_kg),
-    .qsfp0_rx_axis_tuser(qsfp0_rx_axis_tuser_kg),
+    .qsfp0_rx_axis_tdata(qsfp0_rx_axis_tdata_int),
+    .qsfp0_rx_axis_tkeep(qsfp0_rx_axis_tkeep_int),
+    .qsfp0_rx_axis_tvalid(qsfp0_rx_axis_tvalid_int),
+    .qsfp0_rx_axis_tlast(qsfp0_rx_axis_tlast_int),
+    .qsfp0_rx_axis_tuser(qsfp0_rx_axis_tuser_int),
     .qsfp0_rx_ptp_time(qsfp0_rx_ptp_time_int),
     .qsfp0_modprsl(qsfp0_modprsl_int),
 //    .qsfp0_modsell(qsfp0_modsell),
@@ -1851,11 +1736,11 @@ core_inst (
     .qsfp1_tx_ptp_ts_valid(qsfp1_tx_ptp_ts_valid_int),
     .qsfp1_rx_clk(qsfp1_rx_clk_int),
     .qsfp1_rx_rst(qsfp1_rx_rst_int),
-    .qsfp1_rx_axis_tdata(qsfp1_rx_axis_tdata_kg),
-    .qsfp1_rx_axis_tkeep(qsfp1_rx_axis_tkeep_kg),
-    .qsfp1_rx_axis_tvalid(qsfp1_rx_axis_tvalid_kg),
-    .qsfp1_rx_axis_tlast(qsfp1_rx_axis_tlast_kg),
-    .qsfp1_rx_axis_tuser(qsfp1_rx_axis_tuser_kg),
+    .qsfp1_rx_axis_tdata(qsfp1_rx_axis_tdata_int),
+    .qsfp1_rx_axis_tkeep(qsfp1_rx_axis_tkeep_int),
+    .qsfp1_rx_axis_tvalid(qsfp1_rx_axis_tvalid_int),
+    .qsfp1_rx_axis_tlast(qsfp1_rx_axis_tlast_int),
+    .qsfp1_rx_axis_tuser(qsfp1_rx_axis_tuser_int),
     .qsfp1_rx_ptp_time(qsfp1_rx_ptp_time_int),
     .qsfp1_modprsl(qsfp1_modprsl_int),
 //    .qsfp1_modsell(qsfp1_modsell),
