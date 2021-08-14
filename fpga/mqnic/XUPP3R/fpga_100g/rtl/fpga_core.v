@@ -250,25 +250,7 @@ module fpga_core #
     output wire [3:0]                                 qspi_dq_oe,
     output wire                                       qspi_cs,
 
-    output wire [KG_COUNT*AXIL_ADDR_WIDTH-1:0]        m_axil_kg_awaddr,
-    output wire [KG_COUNT*3-1:0]                      m_axil_kg_awprot,
-    output wire [KG_COUNT-1:0]                        m_axil_kg_awvalid,
-    input  wire [KG_COUNT-1:0]                        m_axil_kg_awready,
-    output wire [KG_COUNT*AXIL_DATA_WIDTH-1:0]        m_axil_kg_wdata,
-    output wire [KG_COUNT*AXIL_STRB_WIDTH-1:0]        m_axil_kg_wstrb,
-    output wire [KG_COUNT-1:0]                        m_axil_kg_wvalid,
-    input  wire [KG_COUNT-1:0]                        m_axil_kg_wready,
-    input  wire [KG_COUNT*2-1:0]                      m_axil_kg_bresp,
-    input  wire [KG_COUNT-1:0]                        m_axil_kg_bvalid,
-    output wire [KG_COUNT-1:0]                        m_axil_kg_bready,
-    output wire [KG_COUNT*AXIL_ADDR_WIDTH-1:0]        m_axil_kg_araddr,
-    output wire [KG_COUNT*3-1:0]                      m_axil_kg_arprot,
-    output wire [KG_COUNT-1:0]                        m_axil_kg_arvalid,
-    input  wire [KG_COUNT-1:0]                        m_axil_kg_arready,
-    input  wire [KG_COUNT*AXIL_DATA_WIDTH-1:0]        m_axil_kg_rdata,
-    input  wire [KG_COUNT*2-1:0]                      m_axil_kg_rresp,
-    input  wire [KG_COUNT-1:0]                        m_axil_kg_rvalid,
-    output wire [KG_COUNT-1:0]                        m_axil_kg_rready
+
 );
 
     // PHC parameters
@@ -1158,6 +1140,26 @@ module fpga_core #
         .cfg_interrupt_msi_function_number(cfg_interrupt_msi_function_number)
     );
 
+    wire [KG_COUNT*AXIL_ADDR_WIDTH-1:0]                   m_axil_kg_awaddr;
+    wire [KG_COUNT*3-1:0]                                 m_axil_kg_awprot;
+    wire [KG_COUNT-1:0]                                   m_axil_kg_awvalid;
+    wire [KG_COUNT-1:0]                                   m_axil_kg_awready;
+    wire [KG_COUNT*AXIL_DATA_WIDTH-1:0]                   m_axil_kg_wdata;
+    wire [KG_COUNT*AXIL_STRB_WIDTH-1:0]                   m_axil_kg_wstrb;
+    wire [KG_COUNT-1:0]                                   m_axil_kg_wvalid;
+    wire [KG_COUNT-1:0]                                   m_axil_kg_wready;
+    wire [KG_COUNT*2-1:0]                                 m_axil_kg_bresp;
+    wire [KG_COUNT-1:0]                                   m_axil_kg_bvalid;
+    wire [KG_COUNT-1:0]                                   m_axil_kg_bready;
+    wire [KG_COUNT*AXIL_ADDR_WIDTH-1:0]                   m_axil_kg_araddr;
+    wire [KG_COUNT*3-1:0]                                 m_axil_kg_arprot;
+    wire [KG_COUNT-1:0]                                   m_axil_kg_arvalid;
+    wire [KG_COUNT-1:0]                                   m_axil_kg_arready;
+    wire [KG_COUNT*AXIL_DATA_WIDTH-1:0]                   m_axil_kg_rdata;
+    wire [KG_COUNT*2-1:0]                                 m_axil_kg_rresp;
+    wire [KG_COUNT-1:0]                                   m_axil_kg_rvalid;
+    wire [KG_COUNT-1:0]                                   m_axil_kg_rready;
+
     wire [IF_COUNT*AXIL_ADDR_WIDTH-1:0]                   axil_if_awaddr;
     wire [IF_COUNT*3-1:0]                                 axil_if_awprot;
     wire [IF_COUNT-1:0]                                   axil_if_awvalid;
@@ -1983,8 +1985,6 @@ module fpga_core #
         pps_led_reg <= pps_led_counter_reg > 0;
     end
     // port from IO to kugelblitz
-    wire [PORT_COUNT-1:0]                                 port_tx_clk_int;
-    wire [PORT_COUNT-1:0]                                 port_tx_rst_int;
     wire [PORT_COUNT*AXIS_ETH_DATA_WIDTH-1:0]             port_tx_axis_tdata_int;
     wire [PORT_COUNT*AXIS_ETH_KEEP_WIDTH-1:0]             port_tx_axis_tkeep_int;
     wire [PORT_COUNT-1:0]                                 port_tx_axis_tvalid_int;
@@ -1995,8 +1995,6 @@ module fpga_core #
     wire [PORT_COUNT-1:0]                                 port_tx_ptp_ts_valid_int;
 
     // port from IO to kugelblitz
-    wire [PORT_COUNT-1:0]                                 port_rx_clk_int;
-    wire [PORT_COUNT-1:0]                                 port_rx_rst_int;
     wire [PORT_COUNT*AXIS_ETH_DATA_WIDTH-1:0]             port_rx_axis_tdata_int;
     wire [PORT_COUNT*AXIS_ETH_KEEP_WIDTH-1:0]             port_rx_axis_tkeep_int;
     wire [PORT_COUNT-1:0]                                 port_rx_axis_tvalid_int;
@@ -2043,8 +2041,8 @@ module fpga_core #
         genvar m, n;
 
         if (QSFP0_IND >= 0 && QSFP0_IND < PORT_COUNT) begin : qsfp0
-            assign port_tx_clk_int[QSFP0_IND] = qsfp0_tx_clk;
-            assign port_tx_rst_int[QSFP0_IND] = qsfp0_tx_rst;
+            assign port_tx_clk[QSFP0_IND] = qsfp0_tx_clk;
+            assign port_tx_rst[QSFP0_IND] = qsfp0_tx_rst;
             assign qsfp0_tx_axis_tdata = port_tx_axis_tdata_int[QSFP0_IND*AXIS_ETH_DATA_WIDTH +: AXIS_ETH_DATA_WIDTH];
             assign qsfp0_tx_axis_tkeep = port_tx_axis_tkeep_int[QSFP0_IND*AXIS_ETH_KEEP_WIDTH +: AXIS_ETH_KEEP_WIDTH];
             assign qsfp0_tx_axis_tvalid = port_tx_axis_tvalid_int[QSFP0_IND];
@@ -2054,8 +2052,8 @@ module fpga_core #
             assign port_tx_ptp_ts_int[QSFP0_IND*80 +: 80] = qsfp0_tx_ptp_ts;
             assign port_tx_ptp_ts_valid_int[QSFP0_IND] = qsfp0_tx_ptp_ts_valid;
 
-            assign port_rx_clk_int[QSFP0_IND] = qsfp0_rx_clk;
-            assign port_rx_rst_int[QSFP0_IND] = qsfp0_rx_rst;
+            assign port_rx_clk[QSFP0_IND] = qsfp0_rx_clk;
+            assign port_rx_rst[QSFP0_IND] = qsfp0_rx_rst;
             assign port_rx_axis_tdata_int[QSFP0_IND*AXIS_ETH_DATA_WIDTH +: AXIS_ETH_DATA_WIDTH] = qsfp0_rx_axis_tdata;
             assign port_rx_axis_tkeep_int[QSFP0_IND*AXIS_ETH_KEEP_WIDTH +: AXIS_ETH_KEEP_WIDTH] = qsfp0_rx_axis_tkeep;
             assign port_rx_axis_tvalid_int[QSFP0_IND] = qsfp0_rx_axis_tvalid;
@@ -2123,8 +2121,8 @@ module fpga_core #
         end
 
         if (QSFP1_IND >= 0 && QSFP1_IND < PORT_COUNT) begin : qsfp1
-            assign port_tx_clk_int[QSFP1_IND] = qsfp1_tx_clk;
-            assign port_tx_rst_int[QSFP1_IND] = qsfp1_tx_rst;
+            assign port_tx_clk[QSFP1_IND] = qsfp1_tx_clk;
+            assign port_tx_rst[QSFP1_IND] = qsfp1_tx_rst;
             assign qsfp1_tx_axis_tdata = port_tx_axis_tdata_int[QSFP1_IND*AXIS_ETH_DATA_WIDTH +: AXIS_ETH_DATA_WIDTH];
             assign qsfp1_tx_axis_tkeep = port_tx_axis_tkeep_int[QSFP1_IND*AXIS_ETH_KEEP_WIDTH +: AXIS_ETH_KEEP_WIDTH];
             assign qsfp1_tx_axis_tvalid = port_tx_axis_tvalid_int[QSFP1_IND];
@@ -2134,8 +2132,8 @@ module fpga_core #
             assign port_tx_ptp_ts_int[QSFP1_IND*80 +: 80] = qsfp1_tx_ptp_ts;
             assign port_tx_ptp_ts_valid_int[QSFP1_IND] = qsfp1_tx_ptp_ts_valid;
 
-            assign port_rx_clk_int[QSFP1_IND] = qsfp1_rx_clk;
-            assign port_rx_rst_int[QSFP1_IND] = qsfp1_rx_rst;
+            assign port_rx_clk[QSFP1_IND] = qsfp1_rx_clk;
+            assign port_rx_rst[QSFP1_IND] = qsfp1_rx_rst;
             assign port_rx_axis_tdata_int[QSFP1_IND*AXIS_ETH_DATA_WIDTH +: AXIS_ETH_DATA_WIDTH] = qsfp1_rx_axis_tdata;
             assign port_rx_axis_tkeep_int[QSFP1_IND*AXIS_ETH_KEEP_WIDTH +: AXIS_ETH_KEEP_WIDTH] = qsfp1_rx_axis_tkeep;
             assign port_rx_axis_tvalid_int[QSFP1_IND] = qsfp1_rx_axis_tvalid;
@@ -2737,6 +2735,79 @@ module fpga_core #
                 );
 
                 assign rx_axis_tuser[m +: 1] = rx_axis_tuser_int[m*81 +: 1];
+
+                kugelblitz_offload #(
+                    AXIS_ETH_DATA_WIDTH(AXIS_DATA_WIDTH),
+                    AXIS_ETH_KEEP_WIDTH(AXIS_ETH_KEEP_WIDTH),
+                    USER_WIDTH(1),
+                    AXIL_DATA_WIDTH(AXIL_DATA_WIDTH),
+                    AXIL_STRB_WIDTH(AXIL_STRB_WIDTH),
+                    AXIL_ADDR_WIDTH(AXIL_ADDR_WIDTH),
+                    PORT_COUNT(2)
+                )
+                kugelblitz_offload_inst (
+                    .kg_axil_clk(clk_250mhz),
+                    .kg_axil_rst(rst_250mhz),
+                    .kg_port_tx_clk(port_tx_clk),
+                    .kg_port_tx_rst(port_tx_rst),
+                    .kg_port_rx_clk(port_rx_clk),
+                    .kg_port_rx_rst(port_rx_rst),
+
+                    // port from IO to kugelblitz
+                    .kg_s_axil_awaddr(m_axil_kg_awaddr),
+                    .kg_s_axil_awprot(m_axil_kg_awprot),
+                    .kg_s_axil_awvalid(m_axil_kg_awvalid),
+                    .kg_s_axil_awready(m_axil_kg_awready),
+                    .kg_s_axil_wdata(m_axil_kg_wdata),
+                    .kg_s_axil_wstrb(m_axil_kg_wstrb),
+                    .kg_s_axil_wvalid(m_axil_kg_wvalid),
+                    .kg_s_axil_wready(m_axil_kg_wready),
+                    .kg_s_axil_bresp(m_axil_kg_bresp),
+                    .kg_s_axil_bvalid(m_axil_kg_bvalid),
+                    .kg_s_axil_bready(m_axil_kg_bready),
+                    .kg_s_axil_araddr(m_axil_kg_araddr),
+                    .kg_s_axil_arprot(m_axil_kg_arprot),
+                    .kg_s_axil_arvalid(m_axil_kg_arvalid),
+                    .kg_s_axil_arready(m_axil_kg_arready),
+                    .kg_s_axil_rdata(m_axil_kg_rdata),
+                    .kg_s_axil_rresp(m_axil_kg_rresp),
+                    .kg_s_axil_rvalid(m_axil_kg_rvalid),
+                    .kg_s_axil_rready(m_axil_kg_rready),
+
+                    // port from IO to kugelblitz
+                    .kg_m_port_tx_axis_tdata(port_tx_axis_tdata_int),
+                    .kg_m_port_tx_axis_tkeep(port_tx_axis_tkeep_int),
+                    .kg_m_port_tx_axis_tvalid(port_tx_axis_tvalid_int),
+                    .kg_m_port_tx_axis_tready(port_tx_axis_tready_int),
+                    .kg_m_port_tx_axis_tlast(port_tx_axis_tlast_int),
+                    .kg_m_port_tx_axis_tuser(port_tx_axis_tuser_int),
+                    .kg_m_port_tx_ptp_ts(port_tx_ptp_ts_int),
+                    .kg_m_port_tx_ptp_ts_valid(port_tx_ptp_ts_valid_int),
+
+                    // port from IO to kugelblitz
+                    .kg_s_port_rx_axis_tdata(port_rx_axis_tdata_int),
+                    .kg_s_port_rx_axis_tkeep(port_rx_axis_tkeep_int),
+                    .kg_s_port_rx_axis_tvalid(port_rx_axis_tvalid_int),
+                    .kg_s_port_rx_axis_tlast(port_rx_axis_tlast_int),
+                    .kg_s_port_rx_axis_tuser(port_rx_axis_tuser_int),
+
+                    // port from kugelblitz to corundum
+                    .kg_s_port_tx_axis_tdata(port_tx_axis_tdata),
+                    .kg_s_port_tx_axis_tkeep(port_tx_axis_tkeep),
+                    .kg_s_port_tx_axis_tvalid(port_tx_axis_tvalid),
+                    .kg_s_port_tx_axis_tready(port_tx_axis_tready),
+                    .kg_s_port_tx_axis_tlast(port_tx_axis_tlast),
+                    .kg_s_port_tx_axis_tuser(port_tx_axis_tuser),
+                    .kg_s_port_tx_ptp_ts(port_tx_ptp_ts),
+                    .kg_s_port_tx_ptp_ts_valid(port_tx_ptp_ts_valid),
+
+                    // port from kugelblitz to corundum
+                    .kg_m_port_rx_axis_tdata(port_rx_axis_tdata),
+                    .kg_m_port_rx_axis_tkeep(port_rx_axis_tkeep),
+                    .kg_m_port_rx_axis_tvalid(port_rx_axis_tvalid),
+                    .kg_m_port_rx_axis_tlast(port_rx_axis_tlast),
+                    .kg_m_port_rx_axis_tuser(port_rx_axis_tuser)
+                );
 
                 axis_async_fifo #(
                     .DEPTH(TX_FIFO_DEPTH),
