@@ -150,27 +150,27 @@ module kugelblitz_offload #
             for (k = 0; k < AXIS_ETH_KEEP_WIDTH; k = k + 1) begin
                 if(k == 60) begin
                     // assign constant to kg_qsfp 0
-                    assign kg_m_port_tx_axis_tdata[k*8 +: 8] = !kg_s_port_tx_axis_tkeep[k] ? 8'd0 : 8'haa;
-                    assign kg_m_port_rx_axis_tdata[k*8 +: 8] = !kg_s_port_rx_axis_tkeep[k] ? 8'd0 : 8'haa;
+                    assign kg_m_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_tx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : 8'haa;
+                    assign kg_m_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_rx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : 8'haa;
 
                     // assign axil to kg_qsfp 1
-                    assign kg_m_port_tx_axis_tdata[k*8 +: 8] = !kg_s_port_tx_axis_tkeep[k] ? 8'd0 : kg_data_int[0 +: 8];
-                    assign kg_m_port_rx_axis_tdata[k*8 +: 8] = !kg_s_port_rx_axis_tkeep[k] ? 8'd0 : kg_data_int[0 +: 8];
+                    assign kg_m_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_tx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : kg_data_int[0 +: 8];
+                    assign kg_m_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_rx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : kg_data_int[0 +: 8];
 
                 end else begin
-                    assign kg_m_port_tx_axis_tdata[k*8 +: 8] = !kg_s_port_tx_axis_tkeep[k] ? 8'd0 :
+                    assign kg_m_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_tx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 :
                         (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0 +: 8] :
-                            kg_s_port_tx_axis_tdata[k*8 +: 8];
+                            kg_s_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8];
 
-                    assign kg_m_port_rx_axis_tdata[k*8 +: 8] = !kg_s_port_rx_axis_tkeep[k] ? 8'd0 :
+                    assign kg_m_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_rx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 :
                         (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0 +: 8] :
-                            kg_s_port_rx_axis_tdata[k*8 +: 8];
-                    assign kg_m_port_tx_axis_tdata[k*8 +: 8] = !kg_s_port_tx_axis_tkeep[k] ? 8'd0 :
+                            kg_s_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8];
+                    assign kg_m_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_tx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 :
                         (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1*AXIL_DATA_WIDTH +: 8] :
-                            kg_s_port_tx_axis_tdata[k*8 +: 8];
-                    assign kg_m_port_rx_axis_tdata[k*8 +: 8] = !kg_s_port_rx_axis_tkeep[k] ? 8'd0 :
+                            kg_s_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8];
+                    assign kg_m_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_rx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 :
                         (kg_address_valid_int[1] == 1'b1) && (kg_address_int[1] == k) ? kg_data_int[1*AXIL_DATA_WIDTH +: 8] :
-                            kg_s_port_rx_axis_tdata[k*8 +: 8];
+                            kg_s_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8];
                 end
             end
         end
