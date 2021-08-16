@@ -152,7 +152,7 @@ module kugelblitz_offload #
                     // assign constant to kg_qsfp 0
                     assign kg_m_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_tx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : 8'haa;
                     assign kg_m_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_rx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : 8'haa;
-
+                end else if(k == 61) begin
                     // assign axil to kg_qsfp 1
                     assign kg_m_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_tx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : kg_data_int[0 +: 8];
                     assign kg_m_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_rx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : kg_data_int[0 +: 8];
