@@ -75,8 +75,8 @@ module kugelblitz_offload #
         output wire [PORT_COUNT-1:0]                       kg_s_port_tx_axis_tready,
         output wire [PORT_COUNT-1:0]                       kg_s_port_tx_axis_tlast,
         output wire [PORT_COUNT-1:0]                       kg_s_port_tx_axis_tuser,
-        input  wire [PORT_COUNT*80-1:0]                    kg_s_port_tx_ptp_ts,
-        input  wire [PORT_COUNT-1:0]                       kg_s_port_tx_ptp_ts_valid,
+        output wire [PORT_COUNT*80-1:0]                    kg_s_port_tx_ptp_ts,
+        output wire [PORT_COUNT-1:0]                       kg_s_port_tx_ptp_ts_valid,
 
         // port from kugelblitz to corundum
         output wire [PORT_COUNT*AXIS_ETH_DATA_WIDTH-1:0]   kg_m_port_rx_axis_tdata,
@@ -181,4 +181,8 @@ module kugelblitz_offload #
     assign kg_m_port_rx_axis_tvalid = kg_s_port_rx_axis_tvalid;
     assign kg_m_port_rx_axis_tlast = kg_s_port_rx_axis_tlast;
     assign kg_m_port_rx_axis_tuser = kg_s_port_rx_axis_tuser;
+
+    assign kg_s_port_tx_ptp_ts = kg_m_port_tx_ptp_ts;
+    assign kg_s_port_tx_ptp_ts_valid = kg_m_port_tx_ptp_ts_valid;
+
 endmodule
