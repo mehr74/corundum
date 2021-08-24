@@ -84,6 +84,8 @@ VERILOG_SOURCES += ../../lib/pcie/rtl/dma_client_axis_source.v
 VERILOG_SOURCES += ../../lib/pcie/rtl/pcie_us_cfg.v
 VERILOG_SOURCES += ../../lib/pcie/rtl/pcie_us_msi.v
 VERILOG_SOURCES += ../../lib/pcie/rtl/pulse_merge.v
+VERILOG_SOURCES += ../../lib/kugelblitz/rtl/kugelblitz_offload.v
+VERILOG_SOURCES += ../../lib/kugelblitz/rtl/axil_kg_regfile.v
 
 # module parameters
 export PARAM_AXIS_PCIE_DATA_WIDTH ?= 512

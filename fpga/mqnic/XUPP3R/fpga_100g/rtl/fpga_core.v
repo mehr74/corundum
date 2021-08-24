@@ -2085,7 +2085,7 @@ module fpga_core #
 
         // port from IO to kugelblitz
         .kg_s_port_rx_axis_tdata(port_rx_axis_tdata_int),
-        .kg_s_port_rx_axis_tkeep(i*AXIS_ETH_KEEP_WIDTH + port_rx_axis_tkeep_int),
+        .kg_s_port_rx_axis_tkeep(port_rx_axis_tkeep_int),
         .kg_s_port_rx_axis_tvalid(port_rx_axis_tvalid_int),
         .kg_s_port_rx_axis_tlast(port_rx_axis_tlast_int),
         .kg_s_port_rx_axis_tuser(port_rx_axis_tuser_int),

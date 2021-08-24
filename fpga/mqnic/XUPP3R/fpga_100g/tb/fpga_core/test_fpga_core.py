@@ -500,7 +500,7 @@ axi_rtl_dir = os.path.abspath(os.path.join(lib_dir, 'axi', 'rtl'))
 axis_rtl_dir = os.path.abspath(os.path.join(lib_dir, 'axis', 'rtl'))
 eth_rtl_dir = os.path.abspath(os.path.join(lib_dir, 'eth', 'rtl'))
 pcie_rtl_dir = os.path.abspath(os.path.join(lib_dir, 'pcie', 'rtl'))
-
+kugelblitz_rtl_dir = os.path.abspath(os.path.join(lib_dir, 'kugelblitz', 'rtl'))
 
 def test_fpga_core(request):
     dut = "fpga_core"
@@ -554,6 +554,8 @@ def test_fpga_core(request):
         os.path.join(pcie_rtl_dir, "pcie_us_cfg.v"),
         os.path.join(pcie_rtl_dir, "pcie_us_msi.v"),
         os.path.join(pcie_rtl_dir, "pulse_merge.v"),
+        os.path.join(kugelblitz_rtl_dir, "axil_kg_regfile.v"),
+        os.path.join(kugelblitz_rtl_dir, "kugelblitz_offload.v"),
     ]
 
     parameters = {}

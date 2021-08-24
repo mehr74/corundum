@@ -30,6 +30,7 @@ module kugelblitz_offload #
         input  wire [PORT_COUNT-1:0]                       kg_port_rx_clk,
         input  wire [PORT_COUNT-1:0]                       kg_port_rx_rst,
 
+        // axi lite for configuration purposes
         input  wire [PORT_COUNT*AXIL_ADDR_WIDTH-1:0]       kg_s_axil_awaddr,
         input  wire [PORT_COUNT*3-1:0]                     kg_s_axil_awprot,
         input  wire [PORT_COUNT-1:0]                       kg_s_axil_awvalid,
@@ -146,8 +147,8 @@ module kugelblitz_offload #
     generate
         genvar k;
         genvar i;
-        for (i = 0; i < PORT_COUNT; i = i + 1) begin
-            for (k = 0; k < AXIS_ETH_KEEP_WIDTH; k = k + 1) begin
+        for (i = 0; i < PORT_COUNT; i = i + 1) begin : port
+            for (k = 0; k < AXIS_ETH_KEEP_WIDTH; k = k + 1) begin : keep
                 if(k == 60) begin
                     // assign constant to kg_qsfp 0
                     assign kg_m_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_tx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : 8'haa;
