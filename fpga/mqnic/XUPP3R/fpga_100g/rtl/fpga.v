@@ -138,7 +138,7 @@ parameter AXIS_PCIE_RQ_USER_WIDTH = 137;
 parameter AXIS_PCIE_CQ_USER_WIDTH = 183;
 parameter AXIS_PCIE_CC_USER_WIDTH = 81;
 parameter RQ_SEQ_NUM_WIDTH = 6;
-parameter BAR0_APERTURE = 24;
+parameter BAR0_APERTURE = 25;
 
 parameter AXIS_ETH_DATA_WIDTH = 512;
 parameter AXIS_ETH_KEEP_WIDTH = AXIS_ETH_DATA_WIDTH/8;
