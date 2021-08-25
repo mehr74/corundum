@@ -1989,8 +1989,6 @@ module fpga_core #
     wire [PORT_COUNT-1:0]                                 port_tx_axis_tready_int;
     wire [PORT_COUNT-1:0]                                 port_tx_axis_tlast_int;
     wire [PORT_COUNT-1:0]                                 port_tx_axis_tuser_int;
-    wire [PORT_COUNT*80-1:0]                              port_tx_ptp_ts_int;
-    wire [PORT_COUNT-1:0]                                 port_tx_ptp_ts_valid_int;
 
     // port from IO to kugelblitz
     wire [PORT_COUNT*AXIS_ETH_DATA_WIDTH-1:0]             port_rx_axis_tdata_int;
@@ -2080,8 +2078,6 @@ module fpga_core #
         .kg_m_port_tx_axis_tready(port_tx_axis_tready_int),
         .kg_m_port_tx_axis_tlast(port_tx_axis_tlast_int),
         .kg_m_port_tx_axis_tuser(port_tx_axis_tuser_int),
-        .kg_m_port_tx_ptp_ts(port_tx_ptp_ts_int),
-        .kg_m_port_tx_ptp_ts_valid(port_tx_ptp_ts_valid_int),
 
         // port from IO to kugelblitz
         .kg_s_port_rx_axis_tdata(port_rx_axis_tdata_int),
@@ -2097,8 +2093,6 @@ module fpga_core #
         .kg_s_port_tx_axis_tready(port_tx_axis_tready),
         .kg_s_port_tx_axis_tlast(port_tx_axis_tlast),
         .kg_s_port_tx_axis_tuser(port_tx_axis_tuser),
-        .kg_s_port_tx_ptp_ts(port_tx_ptp_ts),
-        .kg_s_port_tx_ptp_ts_valid(port_tx_ptp_ts_valid),
 
         // port from kugelblitz to corundum
         .kg_m_port_rx_axis_tdata(port_rx_axis_tdata),
@@ -2120,8 +2114,8 @@ module fpga_core #
             assign port_tx_axis_tready_int[QSFP0_IND] = qsfp0_tx_axis_tready;
             assign qsfp0_tx_axis_tlast = port_tx_axis_tlast_int[QSFP0_IND];
             assign qsfp0_tx_axis_tuser = port_tx_axis_tuser_int[QSFP0_IND];
-            assign port_tx_ptp_ts_int[QSFP0_IND*80 +: 80] = qsfp0_tx_ptp_ts;
-            assign port_tx_ptp_ts_valid_int[QSFP0_IND] = qsfp0_tx_ptp_ts_valid;
+            assign port_tx_ptp_ts[QSFP0_IND*80 +: 80] = qsfp0_tx_ptp_ts;
+            assign port_tx_ptp_ts_valid[QSFP0_IND] = qsfp0_tx_ptp_ts_valid;
 
             assign port_rx_clk[QSFP0_IND] = qsfp0_rx_clk;
             assign port_rx_rst[QSFP0_IND] = qsfp0_rx_rst;
@@ -2200,8 +2194,8 @@ module fpga_core #
             assign port_tx_axis_tready_int[QSFP1_IND] = qsfp1_tx_axis_tready;
             assign qsfp1_tx_axis_tlast = port_tx_axis_tlast_int[QSFP1_IND];
             assign qsfp1_tx_axis_tuser = port_tx_axis_tuser_int[QSFP1_IND];
-            assign port_tx_ptp_ts_int[QSFP1_IND*80 +: 80] = qsfp1_tx_ptp_ts;
-            assign port_tx_ptp_ts_valid_int[QSFP1_IND] = qsfp1_tx_ptp_ts_valid;
+            assign port_tx_ptp_ts[QSFP1_IND*80 +: 80] = qsfp1_tx_ptp_ts;
+            assign port_tx_ptp_ts_valid[QSFP1_IND] = qsfp1_tx_ptp_ts_valid;
 
             assign port_rx_clk[QSFP1_IND] = qsfp1_rx_clk;
             assign port_rx_rst[QSFP1_IND] = qsfp1_rx_rst;

@@ -986,7 +986,7 @@ qsfp0_cmac_inst (
     .rx_otn_data_1(), // output [65:0]
     .rx_otn_data_2(), // output [65:0]
     .rx_otn_data_3(), // output [65:0]
-    .rx_otn_data_4(), // output [65:0]
+    .rx_otn_data_4(),// output [65:0]
     .rx_otn_ena(), // output
     .rx_otn_lane0(), // output
     .rx_otn_vlmarker(), // output
