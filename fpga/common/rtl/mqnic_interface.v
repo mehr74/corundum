@@ -247,6 +247,29 @@ module mqnic_interface #
     input  wire                                s_axil_rready,
 
     /*
+     * AXI-Lite slave interface for kugelblitz
+     */
+    input  wire [AXIL_ADDR_WIDTH-1:0]          s_axil_kg_awaddr,
+    input  wire [2:0]                          s_axil_kg_awprot,
+    input  wire                                s_axil_kg_awvalid,
+    output wire                                s_axil_kg_awready,
+    input  wire [AXIL_DATA_WIDTH-1:0]          s_axil_kg_wdata,
+    input  wire [AXIL_STRB_WIDTH-1:0]          s_axil_kg_wstrb,
+    input  wire                                s_axil_kg_wvalid,
+    output wire                                s_axil_kg_wready,
+    output wire [1:0]                          s_axil_kg_bresp,
+    output wire                                s_axil_kg_bvalid,
+    input  wire                                s_axil_kg_bready,
+    input  wire [AXIL_ADDR_WIDTH-1:0]          s_axil_kg_araddr,
+    input  wire [2:0]                          s_axil_kg_arprot,
+    input  wire                                s_axil_kg_arvalid,
+    output wire                                s_axil_kg_arready,
+    output wire [AXIL_DATA_WIDTH-1:0]          s_axil_kg_rdata,
+    output wire [1:0]                          s_axil_kg_rresp,
+    output wire                                s_axil_kg_rvalid,
+    input  wire                                s_axil_kg_rready,
+
+    /*
      * AXI-Lite master interface (passthrough for NIC control and status)
      */
     output wire [AXIL_ADDR_WIDTH-1:0]          m_axil_csr_awaddr,
@@ -308,12 +331,12 @@ module mqnic_interface #
     /*
      * Transmit data output
      */
-    output wire [PORTS*AXIS_DATA_WIDTH-1:0]    tx_axis_tdata,
-    output wire [PORTS*AXIS_KEEP_WIDTH-1:0]    tx_axis_tkeep,
-    output wire [PORTS-1:0]                    tx_axis_tvalid,
-    input  wire [PORTS-1:0]                    tx_axis_tready,
-    output wire [PORTS-1:0]                    tx_axis_tlast,
-    output wire [PORTS-1:0]                    tx_axis_tuser,
+    output wire [PORTS*AXIS_DATA_WIDTH-1:0]    tx_axis_tdata_io,
+    output wire [PORTS*AXIS_KEEP_WIDTH-1:0]    tx_axis_tkeep_io,
+    output wire [PORTS-1:0]                    tx_axis_tvalid_io,
+    input  wire [PORTS-1:0]                    tx_axis_tready_io,
+    output wire [PORTS-1:0]                    tx_axis_tlast_io,
+    output wire [PORTS-1:0]                    tx_axis_tuser_io,
 
     /*
      * Transmit timestamp input
@@ -325,12 +348,12 @@ module mqnic_interface #
     /*
      * Receive data input
      */
-    input  wire [PORTS*AXIS_DATA_WIDTH-1:0]    rx_axis_tdata,
-    input  wire [PORTS*AXIS_KEEP_WIDTH-1:0]    rx_axis_tkeep,
-    input  wire [PORTS-1:0]                    rx_axis_tvalid,
-    output wire [PORTS-1:0]                    rx_axis_tready,
-    input  wire [PORTS-1:0]                    rx_axis_tlast,
-    input  wire [PORTS-1:0]                    rx_axis_tuser,
+    input  wire [PORTS*AXIS_DATA_WIDTH-1:0]    rx_axis_tdata_io,
+    input  wire [PORTS*AXIS_KEEP_WIDTH-1:0]    rx_axis_tkeep_io,
+    input  wire [PORTS-1:0]                    rx_axis_tvalid_io,
+    output wire [PORTS-1:0]                    rx_axis_tready_io,
+    input  wire [PORTS-1:0]                    rx_axis_tlast_io,
+    input  wire [PORTS-1:0]                    rx_axis_tuser_io,
 
     /*
      * Receive timestamp input
@@ -398,6 +421,20 @@ parameter AXIL_PORT_BASE_ADDR = AXIL_RX_CQM_BASE_ADDR + 2**AXIL_RX_CQM_ADDR_WIDT
 function [31:0] w_32(input [31:0] val);
     w_32 = val;
 endfunction
+
+wire [PORTS*AXIS_DATA_WIDTH-1:0]    tx_axis_tdata;
+wire [PORTS*AXIS_KEEP_WIDTH-1:0]    tx_axis_tkeep;
+wire [PORTS-1:0]                    tx_axis_tvalid;
+wire [PORTS-1:0]                    tx_axis_tready;
+wire [PORTS-1:0]                    tx_axis_tlast;
+wire [PORTS-1:0]                    tx_axis_tuser;
+
+wire [PORTS*AXIS_DATA_WIDTH-1:0]    rx_axis_tdata;
+wire [PORTS*AXIS_KEEP_WIDTH-1:0]    rx_axis_tkeep;
+wire [PORTS-1:0]                    rx_axis_tvalid;
+wire [PORTS-1:0]                    rx_axis_tready;
+wire [PORTS-1:0]                    rx_axis_tlast;
+wire [PORTS-1:0]                    rx_axis_tuser;
 
 // AXI lite connections
 wire [AXIL_ADDR_WIDTH-1:0] axil_ctrl_awaddr;
@@ -868,6 +905,76 @@ always @(posedge clk) begin
         axil_ctrl_rvalid_reg <= 1'b0;
     end
 end
+
+    // --------------------------------------------------------------------------------------------------------- //
+    kugelblitz_offload #(
+        AXIS_ETH_DATA_WIDTH(AXIS_DATA_WIDTH),
+        AXIS_ETH_KEEP_WIDTH(AXIS_KEEP_WIDTH),
+        USER_WIDTH(1),
+        AXIL_DATA_WIDTH(AXIL_DATA_WIDTH),
+        AXIL_ADDR_WIDTH(AXIL_ADDR_WIDTH),
+        PORT_COUNT(PORTS)
+    ) kugelblitz_offload_inst
+    (
+        .kg_axil_clk(clk),
+        .kg_axil_rst(rst),
+        .kg_port_tx_clk(clk),
+        .kg_port_tx_rst(rst),
+        .kg_port_rx_clk(clk),
+        .kg_port_rx_rst(rst),
+
+        // axi lite for configuration purposes
+        .kg_s_axil_awaddr(s_axil_kg_awaddr),
+        .kg_s_axil_awprot(s_axil_kg_awprot),
+        .kg_s_axil_awvalid(s_axil_kg_awvalid),
+        .kg_s_axil_awready(s_axil_kg_awready),
+        .kg_s_axil_wdata(s_axil_kg_wdata),
+        .kg_s_axil_wstrb(s_axil_kg_wstrb),
+        .kg_s_axil_wvalid(s_axil_kg_wvalid),
+        .kg_s_axil_wready(s_axil_kg_wready),
+        .kg_s_axil_bresp(s_axil_kg_bresp),
+        .kg_s_axil_bvalid(s_axil_kg_bvalid),
+        .kg_s_axil_bready(s_axil_kg_bready),
+        .kg_s_axil_araddr(s_axil_kg_araddr),
+        .kg_s_axil_arprot(s_axil_kg_arprot),
+        .kg_s_axil_arvalid(s_axil_kg_arvalid),
+        .kg_s_axil_arready(s_axil_kg_arready),
+        .kg_s_axil_rdata(s_axil_kg_rdata),
+        .kg_s_axil_rresp(s_axil_kg_rresp),
+        .kg_s_axil_rvalid(s_axil_kg_rvalid),
+        .kg_s_axil_rready(s_axil_kg_rready),
+
+        // port from IO to kugelblitz
+        .kg_m_port_tx_axis_tdata(tx_axis_tdata_io),
+        .kg_m_port_tx_axis_tkeep(tx_axis_tkeep_io),
+        .kg_m_port_tx_axis_tvalid(tx_axis_tvalid_io),
+        .kg_m_port_tx_axis_tready(tx_axis_tready_io),
+        .kg_m_port_tx_axis_tlast(tx_axis_tlast_io),
+        .kg_m_port_tx_axis_tuser(tx_axis_tuser_io),
+
+        // port from IO to kugelblitz
+        .kg_s_port_rx_axis_tdata(rx_axis_tdata_io),
+        .kg_s_port_rx_axis_tkeep(rx_axis_tkeep_io),
+        .kg_s_port_rx_axis_tvalid(rx_axis_tvalid_io),
+        .kg_s_port_rx_axis_tlast(rx_axis_tlast_io),
+        .kg_s_port_rx_axis_tuser(rx_axis_tuser_io),
+
+        // port from kugelblitz to corundum
+        .kg_s_port_tx_axis_tdata(tx_axis_tdata),
+        .kg_s_port_tx_axis_tkeep(tx_axis_tkeep),
+        .kg_s_port_tx_axis_tvalid(tx_axis_tvalid),
+        .kg_s_port_tx_axis_tready(tx_axis_tready),
+        .kg_s_port_tx_axis_tlast(tx_axis_tlast),
+        .kg_s_port_tx_axis_tuser(tx_axis_tuser),
+
+        // port from kugelblitz to corundum
+        .kg_m_port_rx_axis_tdata(rx_axis_tdata),
+        .kg_m_port_rx_axis_tkeep(rx_axis_tkeep),
+        .kg_m_port_rx_axis_tvalid(rx_axis_tvalid),
+        .kg_m_port_rx_axis_tlast(rx_axis_tlast),
+        .kg_m_port_rx_axis_tuser(rx_axis_tuser)
+    );
+    //
 
 // AXI lite interconnect
 parameter AXIL_S_COUNT = 1;
