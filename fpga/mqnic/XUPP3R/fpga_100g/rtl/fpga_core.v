@@ -2363,25 +2363,25 @@ module fpga_core #
                 /*
                  * AXI-Lite slave interface for kugelblitz
                  */
-                .s_axil_kg_awaddr(axil_kg_awaddr),
-                .s_axil_kg_awprot(axil_kg_awprot),
-                .s_axil_kg_awvalid(axil_kg_awvalid),
-                .s_axil_kg_awready(axil_kg_awready),
-                .s_axil_kg_wdata(axil_kg_wdata),
-                .s_axil_kg_wstrb(axil_kg_wstrb),
-                .s_axil_kg_wvalid(axil_kg_wvalid),
-                .s_axil_kg_wready(axil_kg_wready),
-                .s_axil_kg_bresp(axil_kg_bresp),
-                .s_axil_kg_bvalid(axil_kg_bvalid),
-                .s_axil_kg_bready(axil_kg_bready),
-                .s_axil_kg_araddr(axil_kg_araddr),
-                .s_axil_kg_arprot(axil_kg_arprot),
-                .s_axil_kg_arvalid(axil_kg_arvalid),
-                .s_axil_kg_arready(axil_kg_arready),
-                .s_axil_kg_rdata(axil_kg_rdata),
-                .s_axil_kg_rresp(axil_kg_rresp),
-                .s_axil_kg_rvalid(axil_kg_rvalid),
-                .s_axil_kg_rready(axil_kg_rready),
+                .s_axil_kg_awaddr(axil_kg_awaddr[n*AXIL_ADDR_WIDTH +: AXIL_ADDR_WIDTH]),
+                .s_axil_kg_awprot(axil_kg_awprot[n*3 +: 3]),
+                .s_axil_kg_awvalid(axil_kg_awvalid[n]),
+                .s_axil_kg_awready(axil_kg_awready[n]),
+                .s_axil_kg_wdata(axil_kg_wdata[n*AXIL_DATA_WIDTH +: AXIL_DATA_WIDTH]),
+                .s_axil_kg_wstrb(axil_kg_wstrb[n*AXIL_STRB_WIDTH +: AXIL_STRB_WIDTH]),
+                .s_axil_kg_wvalid(axil_kg_wvalid[n]),
+                .s_axil_kg_wready(axil_kg_wready[n]),
+                .s_axil_kg_bresp(axil_kg_bresp[n*2 +: 2]),
+                .s_axil_kg_bvalid(axil_kg_bvalid[n]),
+                .s_axil_kg_bready(axil_kg_bready[n]),
+                .s_axil_kg_araddr(axil_kg_araddr[n*AXIL_ADDR_WIDTH +: AXIL_ADDR_WIDTH]),
+                .s_axil_kg_arprot(axil_kg_arprot[n*3 +: 3]),
+                .s_axil_kg_arvalid(axil_kg_arvalid[n]),
+                .s_axil_kg_arready(axil_kg_arready[n]),
+                .s_axil_kg_rdata(axil_kg_rdata[n*AXIL_DATA_WIDTH +: AXIL_DATA_WIDTH]),
+                .s_axil_kg_rresp(axil_kg_rresp[n*2 +: 2]),
+                .s_axil_kg_rvalid(axil_kg_rvalid[n]),
+                .s_axil_kg_rready(axil_kg_rready[n]),
 
                 /*
                  * AXI-Lite master interface (passthrough for NIC control and status)
@@ -2445,12 +2445,12 @@ module fpga_core #
                 /*
                  * Transmit data output
                  */
-                .tx_axis_tdata(tx_axis_tdata),
-                .tx_axis_tkeep(tx_axis_tkeep),
-                .tx_axis_tvalid(tx_axis_tvalid),
-                .tx_axis_tready(tx_axis_tready),
-                .tx_axis_tlast(tx_axis_tlast),
-                .tx_axis_tuser(tx_axis_tuser),
+                .tx_axis_tdata_io(tx_axis_tdata),
+                .tx_axis_tkeep_io(tx_axis_tkeep),
+                .tx_axis_tvalid_io(tx_axis_tvalid),
+                .tx_axis_tready_io(tx_axis_tready),
+                .tx_axis_tlast_io(tx_axis_tlast),
+                .tx_axis_tuser_io(tx_axis_tuser),
 
                 /*
                  * Transmit timestamp input
@@ -2462,12 +2462,12 @@ module fpga_core #
                 /*
                  * Receive data input
                  */
-                .rx_axis_tdata(rx_axis_tdata),
-                .rx_axis_tkeep(rx_axis_tkeep),
-                .rx_axis_tvalid(rx_axis_tvalid),
-                .rx_axis_tready(rx_axis_tready),
-                .rx_axis_tlast(rx_axis_tlast),
-                .rx_axis_tuser(rx_axis_tuser),
+                .rx_axis_tdata_io(rx_axis_tdata),
+                .rx_axis_tkeep_io(rx_axis_tkeep),
+                .rx_axis_tvalid_io(rx_axis_tvalid),
+                .rx_axis_tready_io(rx_axis_tready),
+                .rx_axis_tlast_io(rx_axis_tlast),
+                .rx_axis_tuser_io(rx_axis_tuser),
 
                 /*
                  * Receive timestamp input

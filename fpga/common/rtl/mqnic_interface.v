@@ -908,12 +908,12 @@ end
 
     // --------------------------------------------------------------------------------------------------------- //
     kugelblitz_offload #(
-        AXIS_ETH_DATA_WIDTH(AXIS_DATA_WIDTH),
-        AXIS_ETH_KEEP_WIDTH(AXIS_KEEP_WIDTH),
-        USER_WIDTH(1),
-        AXIL_DATA_WIDTH(AXIL_DATA_WIDTH),
-        AXIL_ADDR_WIDTH(AXIL_ADDR_WIDTH),
-        PORT_COUNT(PORTS)
+        .AXIS_ETH_DATA_WIDTH(AXIS_DATA_WIDTH),
+        .AXIS_ETH_KEEP_WIDTH(AXIS_KEEP_WIDTH),
+        .USER_WIDTH(1),
+        .AXIL_DATA_WIDTH(AXIL_DATA_WIDTH),
+        .AXIL_ADDR_WIDTH(AXIL_ADDR_WIDTH),
+        .PORT_COUNT(PORTS)
     ) kugelblitz_offload_inst
     (
         .kg_axil_clk(clk),
