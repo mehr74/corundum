@@ -319,7 +319,7 @@ module fpga_core #
     parameter MAX_TX_SIZE = 16384;
     parameter MAX_RX_SIZE = 16384;
 
-    parameter IF_AXIL_ADDR_WIDTH = AXIL_ADDR_WIDTH-$clog2(IF_COUNT*2);
+    parameter IF_AXIL_ADDR_WIDTH = AXIL_ADDR_WIDTH-$clog2(IF_COUNT*2)-$clog2(KG_COUNT*2);
     parameter AXIL_CSR_ADDR_WIDTH = IF_AXIL_ADDR_WIDTH-5-$clog2((PORTS_PER_IF+3)/8);
 
     // AXI stream interface parameters
