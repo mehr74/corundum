@@ -63,6 +63,7 @@ module kugelblitz_offload #
         input  wire [PORT_COUNT*AXIS_ETH_DATA_WIDTH-1:0]   kg_s_port_rx_axis_tdata,
         input  wire [PORT_COUNT*AXIS_ETH_KEEP_WIDTH-1:0]   kg_s_port_rx_axis_tkeep,
         input  wire [PORT_COUNT-1:0]                       kg_s_port_rx_axis_tvalid,
+        output wire [PORT_COUNT-1:0]                       kg_s_port_rx_axis_tready,
         input  wire [PORT_COUNT-1:0]                       kg_s_port_rx_axis_tlast,
         input  wire [PORT_COUNT*81-1:0]                    kg_s_port_rx_axis_tuser,
 
@@ -78,6 +79,7 @@ module kugelblitz_offload #
         output wire [PORT_COUNT*AXIS_ETH_DATA_WIDTH-1:0]   kg_m_port_rx_axis_tdata,
         output wire [PORT_COUNT*AXIS_ETH_KEEP_WIDTH-1:0]   kg_m_port_rx_axis_tkeep,
         output wire [PORT_COUNT-1:0]                       kg_m_port_rx_axis_tvalid,
+        input  wire [PORT_COUNT-1:0]                       kg_m_port_rx_axis_tready,
         output wire [PORT_COUNT-1:0]                       kg_m_port_rx_axis_tlast,
         output wire [PORT_COUNT*81-1:0]                    kg_m_port_rx_axis_tuser
     );
@@ -140,41 +142,17 @@ module kugelblitz_offload #
         end
     endgenerate
 
-    generate
-        genvar k;
-        genvar i;
-        for (i = 0; i < PORT_COUNT; i = i + 1) begin : port
-            for (k = 0; k < AXIS_ETH_KEEP_WIDTH; k = k + 1) begin : keep
-                // if(k == 60) begin
-                //     // assign constant to kg_qsfp 0
-                //     assign kg_m_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_tx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : 8'haa;
-                //     assign kg_m_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_rx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : 8'haa;
-                // end else if(k == 61) begin
-                //     // assign axil to kg_qsfp 1
-                //     assign kg_m_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_tx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : kg_data_int[0 +: 8];
-                //     assign kg_m_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_rx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 : kg_data_int[0 +: 8];
-                //
-                // end else begin
-                    assign kg_m_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_tx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 :
-                        (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0 +: 8] :
-                            kg_s_port_tx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8];
-
-                    assign kg_m_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8] = !kg_s_port_rx_axis_tkeep[i*AXIS_ETH_KEEP_WIDTH + k] ? 8'd0 :
-                        (kg_address_valid_int[0] == 1'b1) && (kg_address_int[0] == k) ? kg_data_int[0 +: 8] :
-                            kg_s_port_rx_axis_tdata[i*AXIS_ETH_DATA_WIDTH + k*8 +: 8];
-                // end
-            end
-        end
-    endgenerate
-
+    assign kg_m_port_tx_axis_tdata = kg_s_port_tx_axis_tdata;
     assign kg_m_port_tx_axis_tkeep = kg_s_port_tx_axis_tkeep;
     assign kg_m_port_tx_axis_tvalid = kg_s_port_tx_axis_tvalid;
     assign kg_s_port_tx_axis_tready = kg_m_port_tx_axis_tready;
     assign kg_m_port_tx_axis_tlast = kg_s_port_tx_axis_tlast;
     assign kg_m_port_tx_axis_tuser = kg_s_port_tx_axis_tuser;
 
+    assign kg_m_port_rx_axis_tdata = kg_s_port_rx_axis_tdata;
     assign kg_m_port_rx_axis_tkeep = kg_s_port_rx_axis_tkeep;
     assign kg_m_port_rx_axis_tvalid = kg_s_port_rx_axis_tvalid;
+    assign kg_s_port_rx_axis_tready = kg_m_port_rx_axis_tready;
     assign kg_m_port_rx_axis_tlast = kg_s_port_rx_axis_tlast;
     assign kg_m_port_rx_axis_tuser = kg_s_port_rx_axis_tuser;
 endmodule

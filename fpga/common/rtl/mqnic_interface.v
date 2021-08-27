@@ -956,6 +956,7 @@ end
         .kg_s_port_rx_axis_tdata(rx_axis_tdata_io),
         .kg_s_port_rx_axis_tkeep(rx_axis_tkeep_io),
         .kg_s_port_rx_axis_tvalid(rx_axis_tvalid_io),
+        .kg_s_port_rx_axis_tready(rx_axis_tready_io),
         .kg_s_port_rx_axis_tlast(rx_axis_tlast_io),
         .kg_s_port_rx_axis_tuser(rx_axis_tuser_io),
 
@@ -971,6 +972,7 @@ end
         .kg_m_port_rx_axis_tdata(rx_axis_tdata),
         .kg_m_port_rx_axis_tkeep(rx_axis_tkeep),
         .kg_m_port_rx_axis_tvalid(rx_axis_tvalid),
+        .kg_m_port_rx_axis_tready(rx_axis_tready),
         .kg_m_port_rx_axis_tlast(rx_axis_tlast),
         .kg_m_port_rx_axis_tuser(rx_axis_tuser)
     );
