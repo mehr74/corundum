@@ -65,15 +65,15 @@ module kugelblitz_offload #
         input  wire [PORT_COUNT-1:0]                       kg_s_port_rx_axis_tvalid,
         output wire [PORT_COUNT-1:0]                       kg_s_port_rx_axis_tready,
         input  wire [PORT_COUNT-1:0]                       kg_s_port_rx_axis_tlast,
-        input  wire [PORT_COUNT*81-1:0]                    kg_s_port_rx_axis_tuser,
+        input  wire [PORT_COUNT-1:0]                       kg_s_port_rx_axis_tuser,
 
         // port from kugelblitz to corundum
         input  wire [PORT_COUNT*AXIS_ETH_DATA_WIDTH-1:0]   kg_s_port_tx_axis_tdata,
         input  wire [PORT_COUNT*AXIS_ETH_KEEP_WIDTH-1:0]   kg_s_port_tx_axis_tkeep,
         input  wire [PORT_COUNT-1:0]                       kg_s_port_tx_axis_tvalid,
         output wire [PORT_COUNT-1:0]                       kg_s_port_tx_axis_tready,
-        output wire [PORT_COUNT-1:0]                       kg_s_port_tx_axis_tlast,
-        output wire [PORT_COUNT-1:0]                       kg_s_port_tx_axis_tuser,
+        input  wire [PORT_COUNT-1:0]                       kg_s_port_tx_axis_tlast,
+        input  wire [PORT_COUNT-1:0]                       kg_s_port_tx_axis_tuser,
 
         // port from kugelblitz to corundum
         output wire [PORT_COUNT*AXIS_ETH_DATA_WIDTH-1:0]   kg_m_port_rx_axis_tdata,
@@ -81,21 +81,8 @@ module kugelblitz_offload #
         output wire [PORT_COUNT-1:0]                       kg_m_port_rx_axis_tvalid,
         input  wire [PORT_COUNT-1:0]                       kg_m_port_rx_axis_tready,
         output wire [PORT_COUNT-1:0]                       kg_m_port_rx_axis_tlast,
-        output wire [PORT_COUNT*81-1:0]                    kg_m_port_rx_axis_tuser
+        output wire [PORT_COUNT-1:0]                       kg_m_port_rx_axis_tuser
     );
-
-    // check configuration
-    initial begin
-        if (AXIS_ETH_DATA_WIDTH != 512) begin
-            $error("Error: AXI stream data width must be 512 (instance %m)");
-            $finish;
-        end
-
-        if (AXIS_ETH_KEEP_WIDTH * 8 != AXIS_ETH_DATA_WIDTH) begin
-            $error("Error: AXI stream interface requires byte (8-bit) granularity (instance %m)");
-            $finish;
-        end
-    end
 
     wire [PORT_COUNT*AXIL_DATA_WIDTH-1:0] kg_address_valid_int;
     wire [PORT_COUNT*AXIL_DATA_WIDTH-1:0] kg_address_int;
@@ -142,17 +129,17 @@ module kugelblitz_offload #
         end
     endgenerate
 
-    assign kg_m_port_tx_axis_tdata = kg_s_port_tx_axis_tdata;
-    assign kg_m_port_tx_axis_tkeep = kg_s_port_tx_axis_tkeep;
+    assign kg_m_port_tx_axis_tdata  = kg_s_port_tx_axis_tdata;
+    assign kg_m_port_tx_axis_tkeep  = kg_s_port_tx_axis_tkeep;
     assign kg_m_port_tx_axis_tvalid = kg_s_port_tx_axis_tvalid;
     assign kg_s_port_tx_axis_tready = kg_m_port_tx_axis_tready;
-    assign kg_m_port_tx_axis_tlast = kg_s_port_tx_axis_tlast;
-    assign kg_m_port_tx_axis_tuser = kg_s_port_tx_axis_tuser;
+    assign kg_m_port_tx_axis_tlast  = kg_s_port_tx_axis_tlast;
+    assign kg_m_port_tx_axis_tuser  = kg_s_port_tx_axis_tuser;
 
-    assign kg_m_port_rx_axis_tdata = kg_s_port_rx_axis_tdata;
-    assign kg_m_port_rx_axis_tkeep = kg_s_port_rx_axis_tkeep;
+    assign kg_m_port_rx_axis_tdata  = kg_s_port_rx_axis_tdata;
+    assign kg_m_port_rx_axis_tkeep  = kg_s_port_rx_axis_tkeep;
     assign kg_m_port_rx_axis_tvalid = kg_s_port_rx_axis_tvalid;
     assign kg_s_port_rx_axis_tready = kg_m_port_rx_axis_tready;
-    assign kg_m_port_rx_axis_tlast = kg_s_port_rx_axis_tlast;
-    assign kg_m_port_rx_axis_tuser = kg_s_port_rx_axis_tuser;
+    assign kg_m_port_rx_axis_tlast  = kg_s_port_rx_axis_tlast;
+    assign kg_m_port_rx_axis_tuser  = kg_s_port_rx_axis_tuser;
 endmodule
