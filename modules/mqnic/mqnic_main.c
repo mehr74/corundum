@@ -115,7 +115,18 @@ static irqreturn_t mqnic_interrupt(int irq, void *data)
 
 static int mqnic_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 {
+
+
+
     int ret = 0;
+    long unsigned int kg_hw_regs_size;
+    phys_addr_t kg_hw_regs_phys;
+    u8 __iomem *kg_hw_addr;
+    u32 kg_address_valid_check;
+    u32 kg_address_check;
+    u32 kg_data_valid_check;
+    u32 kg_data_check;
+
     struct mqnic_dev *mqnic;
     struct device *dev = &pdev->dev;
 
@@ -177,6 +188,30 @@ static int mqnic_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent
 
     mqnic->hw_regs_size = pci_resource_len(pdev, 0);
     mqnic->hw_regs_phys = pci_resource_start(pdev, 0);
+
+    kg_hw_regs_size = pci_resource_len(pdev, 2);
+    kg_hw_regs_phys = pci_resource_start(pdev, 2);
+    dev_info(dev, "mqnic memory size : 0x%lx", mqnic->hw_regs_size);
+    dev_info(dev, "mqnic memory start : 0x%lx", mqnic->hw_regs_phys);
+
+    dev_info(dev, "kugelblitz memory size : 0x%lx", kg_hw_regs_size);
+    dev_info(dev, "kugelblitz memory start : 0x%lx", kg_hw_regs_phys);
+
+    kg_hw_addr = pci_ioremap_bar(pdev, 2);
+    iowrite32(0x1, kg_hw_addr + 0);
+    iowrite32(0x2, kg_hw_addr + 4);
+    iowrite32(0x3, kg_hw_addr + 8);
+    iowrite32(0x4, kg_hw_addr + 12);
+
+    kg_address_valid_check = ioread32(kg_hw_addr);
+    kg_address_check = ioread32(kg_hw_addr + 4);
+    kg_data_valid_check = ioread32(kg_hw_addr + 8);
+    kg_data_check = ioread32(kg_hw_addr + 12);
+
+    dev_info(dev, "kugelblitz address valid check : 0x%x", kg_address_valid_check);
+    dev_info(dev, "kugelblitz address check : 0x%x", kg_address_check);
+    dev_info(dev, "kugelblitz data valid check : 0x%x", kg_data_valid_check);
+    dev_info(dev, "kugelblitz data check : 0x%x", kg_data_check);
 
     // Map BAR
     mqnic->hw_addr = pci_ioremap_bar(pdev, 0);
