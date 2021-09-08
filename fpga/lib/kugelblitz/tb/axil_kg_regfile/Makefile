@@ -2,7 +2,7 @@
 TOPLEVEL_LANG = verilog
 
 SIM ?= icarus
-WAVES ?= 0
+WAVES ?= 1
 
 COCOTB_HDL_TIMEUNIT = 1ns
 COCOTB_HDL_TIMEPRECISION = 1ps
@@ -11,6 +11,7 @@ DUT      = axil_kg_regfile
 TOPLEVEL = $(DUT)
 MODULE   = test_$(DUT)
 VERILOG_SOURCES += ../../rtl/$(DUT).v
+VERILOG_SOURCES += ../../rtl/axil_kg_regfile2.v
 
 REG_TYPE ?= 1
 

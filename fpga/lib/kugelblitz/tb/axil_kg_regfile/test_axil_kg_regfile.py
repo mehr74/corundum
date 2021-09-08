@@ -135,7 +135,7 @@ async def run_test_read(dut, idle_inserter=None, backpressure_inserter=None):
 
 
 if cocotb.SIM_NAME:
-    for test in [run_test_write, run_test_read]:
+    for test in [run_test_read]:
         factory = TestFactory(test)
         factory.generate_tests()
 
