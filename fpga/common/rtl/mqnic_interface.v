@@ -916,12 +916,8 @@ end
         .PORT_COUNT(PORTS)
     ) kugelblitz_offload_inst
     (
-        .kg_axil_clk(clk),
-        .kg_axil_rst(rst),
-        .kg_port_tx_clk(clk),
-        .kg_port_tx_rst(rst),
-        .kg_port_rx_clk(clk),
-        .kg_port_rx_rst(rst),
+        .kg_clk(clk),
+        .kg_rst(rst),
 
         // axi lite for configuration purposes
         .kg_s_axil_awaddr(s_axil_kg_awaddr),
