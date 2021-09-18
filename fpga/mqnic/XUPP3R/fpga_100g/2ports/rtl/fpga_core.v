@@ -51,7 +51,7 @@ module fpga_core #
     parameter BAR0_APERTURE = 25,
     parameter AXIS_ETH_DATA_WIDTH = 512,
     parameter AXIS_ETH_KEEP_WIDTH = AXIS_ETH_DATA_WIDTH/8,
-    parameter KG_COUNT = 1
+    parameter KG_COUNT = 2
     )
 (
     /*
@@ -197,6 +197,43 @@ module fpga_core #
     output wire                                       qsfp0_i2c_sda_o,
     output wire                                       qsfp0_i2c_sda_t,
 
+    input wire                                        qsfp1_tx_clk,
+    input wire                                        qsfp1_tx_rst,
+
+    output wire [AXIS_ETH_DATA_WIDTH-1:0]             qsfp1_tx_axis_tdata,
+    output wire [AXIS_ETH_KEEP_WIDTH-1:0]             qsfp1_tx_axis_tkeep,
+    output wire                                       qsfp1_tx_axis_tvalid,
+    input wire                                        qsfp1_tx_axis_tready,
+    output wire                                       qsfp1_tx_axis_tlast,
+    output wire                                       qsfp1_tx_axis_tuser,
+
+    output wire [79:0]                                qsfp1_tx_ptp_time,
+    input wire [79:0]                                 qsfp1_tx_ptp_ts,
+    input wire                                        qsfp1_tx_ptp_ts_valid,
+
+    input wire                                        qsfp1_rx_clk,
+    input wire                                        qsfp1_rx_rst,
+
+    input wire [AXIS_ETH_DATA_WIDTH-1:0]              qsfp1_rx_axis_tdata,
+    input wire [AXIS_ETH_KEEP_WIDTH-1:0]              qsfp1_rx_axis_tkeep,
+    input wire                                        qsfp1_rx_axis_tvalid,
+    input wire                                        qsfp1_rx_axis_tlast,
+    input wire [80+1-1:0]                             qsfp1_rx_axis_tuser,
+
+    output wire [79:0]                                qsfp1_rx_ptp_time,
+
+    output wire                                       qsfp1_modsell,
+    output wire                                       qsfp1_resetl,
+    input wire                                        qsfp1_modprsl,
+    input wire                                        qsfp1_intl,
+    output wire                                       qsfp1_lpmode,
+    input wire                                        qsfp1_i2c_scl_i,
+    output wire                                       qsfp1_i2c_scl_o,
+    output wire                                       qsfp1_i2c_scl_t,
+    input wire                                        qsfp1_i2c_sda_i,
+    output wire                                       qsfp1_i2c_sda_o,
+    output wire                                       qsfp1_i2c_sda_t,
+
     output wire                                       qsfp_ctl_en,
     output wire                                       fpga_i2c_master_l,
 
@@ -226,9 +263,9 @@ module fpga_core #
     parameter FPGA_ID = 32'h4B31093;
 
     // Structural parameters
-    parameter IF_COUNT = 1;
+    parameter IF_COUNT = 2;
     parameter PORTS_PER_IF = 1;
-    parameter AXIL_IF_COUNT = 2;
+    parameter AXIL_IF_COUNT = 4;
 
     parameter PORT_COUNT = IF_COUNT*PORTS_PER_IF;
 
@@ -415,12 +452,16 @@ module fpga_core #
     reg axil_csr_rvalid_reg = 1'b0;
 
     reg qsfp0_reset_reg = 1'b0;
+    reg qsfp1_reset_reg = 1'b0;
 
     reg qsfp0_lpmode_reg = 1'b0;
+    reg qsfp1_lpmode_reg = 1'b0;
 
     reg qsfp0_i2c_scl_o_reg = 1'b1;
     reg qsfp0_i2c_sda_o_reg = 1'b1;
 
+    reg qsfp1_i2c_scl_o_reg = 1'b1;
+    reg qsfp1_i2c_sda_o_reg = 1'b1;
 
     reg qsfp_ctl_en_reg =  1'b1;
     reg fpga_i2c_master_l_reg = 1'b0;
@@ -461,10 +502,13 @@ module fpga_core #
     assign axil_csr_rvalid = axil_csr_rvalid_reg;
 
     assign qsfp0_modsell = 1'b0;
+    assign qsfp1_modsell = 1'b0;
 
     assign qsfp0_resetl = !qsfp0_reset_reg;
+    assign qsfp1_resetl = !qsfp1_reset_reg;
 
     assign qsfp0_lpmode = qsfp0_lpmode_reg;
+    assign qsfp1_lpmode = qsfp1_lpmode_reg;
 
        /*
 
@@ -479,6 +523,12 @@ module fpga_core #
     assign qsfp0_i2c_scl_t = qsfp0_i2c_scl_o_reg;
     assign qsfp0_i2c_sda_o = qsfp0_i2c_sda_o_reg;
     assign qsfp0_i2c_sda_t = qsfp0_i2c_sda_o_reg;
+
+
+    assign qsfp1_i2c_scl_o = qsfp1_i2c_scl_o_reg;
+    assign qsfp1_i2c_scl_t = qsfp1_i2c_scl_o_reg;
+    assign qsfp1_i2c_sda_o = qsfp1_i2c_sda_o_reg;
+    assign qsfp1_i2c_sda_t = qsfp1_i2c_sda_o_reg;
 
 
        assign qsfp_ctl_en = qsfp_ctl_en_reg;
@@ -528,12 +578,25 @@ module fpga_core #
                         qsfp0_i2c_sda_o_reg <= axil_csr_wdata[9];
                     end
                 end
+            16'h0114: begin
+                    // GPIO I2C 1
+                    if (axil_csr_wstrb[0]) begin
+                        qsfp1_i2c_scl_o_reg <= axil_csr_wdata[1];
+                    end
+                    if (axil_csr_wstrb[1]) begin
+                        qsfp1_i2c_sda_o_reg <= axil_csr_wdata[9];
+                    end
+                end
 
                 16'h0120: begin
                     // GPIO XCVR 0123
                     if (axil_csr_wstrb[0]) begin
                         qsfp0_reset_reg <= axil_csr_wdata[4];
                         qsfp0_lpmode_reg <= axil_csr_wdata[5];
+                    end
+                    if (axil_csr_wstrb[1]) begin
+                        qsfp1_reset_reg <= axil_csr_wdata[12];
+                        qsfp1_lpmode_reg <= axil_csr_wdata[13];
                     end
                 end
                 // Flash
@@ -601,12 +664,24 @@ module fpga_core #
                     axil_csr_rdata_reg[8] <= qsfp0_i2c_sda_i;
                     axil_csr_rdata_reg[9] <= qsfp0_i2c_sda_o_reg;
                 end
+            16'h0114: begin
+                    // GPIO I2C 1
+                    axil_csr_rdata_reg[0] <= qsfp1_i2c_scl_i;
+                    axil_csr_rdata_reg[1] <= qsfp1_i2c_scl_o_reg;
+                    axil_csr_rdata_reg[8] <= qsfp1_i2c_sda_i;
+                    axil_csr_rdata_reg[9] <= qsfp1_i2c_sda_o_reg;
+                end
+
                 16'h0120: begin
                     // GPIO XCVR 0123
                     axil_csr_rdata_reg[0] <= !qsfp0_modprsl;
                     axil_csr_rdata_reg[1] <= !qsfp0_intl;
                     axil_csr_rdata_reg[4] <= qsfp0_reset_reg;
                     axil_csr_rdata_reg[5] <= qsfp0_lpmode_reg;
+                    axil_csr_rdata_reg[8] <= !qsfp1_modprsl;
+                    axil_csr_rdata_reg[9] <= !qsfp1_intl;
+                    axil_csr_rdata_reg[12] <= qsfp1_reset_reg;
+                    axil_csr_rdata_reg[13] <= qsfp1_lpmode_reg;
                 end
                 // Flash
                 16'h0140: axil_csr_rdata_reg <= {8'd0, 8'd4, 8'd2, 8'd0}; // Flash ID
@@ -654,11 +729,15 @@ module fpga_core #
             axil_csr_rvalid_reg <= 1'b0;
 
             qsfp0_reset_reg <= 1'b0;
+            qsfp1_reset_reg <= 1'b0;
 
             qsfp0_lpmode_reg <= 1'b0;
+            qsfp1_lpmode_reg <= 1'b0;
 
             qsfp0_i2c_scl_o_reg <= 1'b1;
             qsfp0_i2c_sda_o_reg <= 1'b1;
+            qsfp1_i2c_scl_o_reg <= 1'b1;
+            qsfp1_i2c_sda_o_reg <= 1'b1;
 
             fpga_boot_reg <= 1'b0;
 
@@ -2021,6 +2100,86 @@ module fpga_core #
             assign qsfp0_tx_axis_tuser = 1'b0;
             assign qsfp0_tx_ptp_time = 80'd0;
             assign qsfp0_rx_ptp_time = 80'd0;
+        end
+
+        if (QSFP1_IND >= 0 && QSFP1_IND < PORT_COUNT) begin : qsfp1
+            assign port_tx_clk[QSFP1_IND] = qsfp1_tx_clk;
+            assign port_tx_rst[QSFP1_IND] = qsfp1_tx_rst;
+            assign qsfp1_tx_axis_tdata = port_tx_axis_tdata[QSFP1_IND*AXIS_ETH_DATA_WIDTH +: AXIS_ETH_DATA_WIDTH];
+            assign qsfp1_tx_axis_tkeep = port_tx_axis_tkeep[QSFP1_IND*AXIS_ETH_KEEP_WIDTH +: AXIS_ETH_KEEP_WIDTH];
+            assign qsfp1_tx_axis_tvalid = port_tx_axis_tvalid[QSFP1_IND];
+            assign port_tx_axis_tready[QSFP1_IND] = qsfp1_tx_axis_tready;
+            assign qsfp1_tx_axis_tlast = port_tx_axis_tlast[QSFP1_IND];
+            assign qsfp1_tx_axis_tuser = port_tx_axis_tuser[QSFP1_IND];
+            assign port_tx_ptp_ts[QSFP1_IND*80 +: 80] = qsfp1_tx_ptp_ts;
+            assign port_tx_ptp_ts_valid[QSFP1_IND] = qsfp1_tx_ptp_ts_valid;
+
+            assign port_rx_clk[QSFP1_IND] = qsfp1_rx_clk;
+            assign port_rx_rst[QSFP1_IND] = qsfp1_rx_rst;
+            assign port_rx_axis_tdata[QSFP1_IND*AXIS_ETH_DATA_WIDTH +: AXIS_ETH_DATA_WIDTH] = qsfp1_rx_axis_tdata;
+            assign port_rx_axis_tkeep[QSFP1_IND*AXIS_ETH_KEEP_WIDTH +: AXIS_ETH_KEEP_WIDTH] = qsfp1_rx_axis_tkeep;
+            assign port_rx_axis_tvalid[QSFP1_IND] = qsfp1_rx_axis_tvalid;
+            assign port_rx_axis_tlast[QSFP1_IND] = qsfp1_rx_axis_tlast;
+            assign port_rx_axis_tuser[QSFP1_IND*81 +: 81] = qsfp1_rx_axis_tuser;
+
+            if (PTP_TS_ENABLE) begin : ptp
+                wire [PTP_TS_WIDTH-1:0]                   tx_ptp_ts_96;
+                wire [PTP_TS_WIDTH-1:0]                   rx_ptp_ts_96;
+
+                assign qsfp1_tx_ptp_time = tx_ptp_ts_96[95:16];
+                assign qsfp1_rx_ptp_time = rx_ptp_ts_96[95:16];
+
+                ptp_clock_cdc #(
+                    .TS_WIDTH(96),
+                    .NS_WIDTH(4),
+                    .FNS_WIDTH(16),
+                    .USE_SAMPLE_CLOCK(1'b0)
+                )
+                tx_ptp_cdc (
+                    .input_clk(clk_250mhz),
+                    .input_rst(rst_250mhz),
+                    .output_clk(qsfp1_tx_clk),
+                    .output_rst(qsfp1_tx_rst),
+                    .sample_clk(clk_250mhz),
+                    .input_ts(ptp_ts_96),
+                    .input_ts_step(ptp_ts_step),
+                    .output_ts(tx_ptp_ts_96),
+                    .output_ts_step(),
+                    .output_pps(),
+                    .locked()
+                );
+
+                ptp_clock_cdc #(
+                    .TS_WIDTH(96),
+                    .NS_WIDTH(4),
+                    .FNS_WIDTH(16),
+                    .USE_SAMPLE_CLOCK(1'b0)
+                )
+                rx_ptp_cdc (
+                    .input_clk(clk_250mhz),
+                    .input_rst(rst_250mhz),
+                    .output_clk(qsfp1_rx_clk),
+                    .output_rst(qsfp1_rx_rst),
+                    .sample_clk(clk_250mhz),
+                    .input_ts(ptp_ts_96),
+                    .input_ts_step(ptp_ts_step),
+                    .output_ts(rx_ptp_ts_96),
+                    .output_ts_step(),
+                    .output_pps(),
+                    .locked()
+                );
+            end else begin
+                assign qsfp1_tx_ptp_time = 80'd0;
+                assign qsfp1_rx_ptp_time = 80'd0;
+            end
+        end else begin
+            assign qsfp1_tx_axis_tdata = {AXIS_ETH_DATA_WIDTH{1'b0}};
+            assign qsfp1_tx_axis_tkeep = {AXIS_ETH_KEEP_WIDTH{1'b0}};
+            assign qsfp1_tx_axis_tvalid = 1'b0;
+            assign qsfp1_tx_axis_tlast = 1'b0;
+            assign qsfp1_tx_axis_tuser = 1'b0;
+            assign qsfp1_tx_ptp_time = 80'd0;
+            assign qsfp1_rx_ptp_time = 80'd0;
         end
 
         case (IF_COUNT)
